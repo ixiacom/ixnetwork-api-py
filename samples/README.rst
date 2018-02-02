@@ -1,0 +1,2 @@
+* IxNetwork has two different protocol-stack configuration models known as Classic and Next Generation Protocol Framework (NGPF). You will find samples demonstrating how to configure and run tests of various protocol types for each of the models.
+* In order to run a sample on your setup you will need to update the following information: chassis, cards and ports, path of IxNetwork install directory, IxTCLServer IP and port.
