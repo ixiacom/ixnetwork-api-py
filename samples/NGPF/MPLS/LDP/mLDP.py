@@ -1,12 +1,8 @@
 # -*- coding: cp1252 -*-
 ################################################################################
-# Version 1.0    $Revision: 1 $                                                #
 #                                                                              #
-#    Copyright  1997 - 2017 by IXIA                                            #
+#    Copyright © 1997 - 2018 by IXIA                                           #
 #    All Rights Reserved.                                                      #
-#                                                                              #
-#    Revision Log:                                                             #
-#    08/06/2017 - Debarati Chakraborty - created sample                        #
 #                                                                              #
 ################################################################################
 
@@ -66,10 +62,6 @@
 #   10. Retrieve L2-L3 traffic stats.                                          #
 #   11. Stop L2-L3 traffic.                                                    #
 #   12. Stop all protocols.                                                    #
-# Ixia Software:                                                               #
-#    IxOS      8.30 EB (8.30.1351.3)                                           #
-#    IxNetwork 8.30 EB (8.30.1076.4)                                           #
-#                                                                              #
 ################################################################################
 import os
 import sys

@@ -1,12 +1,8 @@
 # -*- coding: cp1252 -*-
 ################################################################################
-# Version 1.0    $Revision: 1 $                                                #
 #                                                                              #
-#    Copyright  1997 - 2014 by IXIA                                            #
+#    Copyright © 1997 - 2018 by IXIA                                           #
 #    All Rights Reserved.                                                      #
-#                                                                              #
-#    Revision Log:                                                             #
-#    11/01/2012 - Alka Pattnaik - created sample                               #
 #                                                                              #
 ################################################################################
 
@@ -55,11 +51,6 @@
 #    than it will retrieve and display few statistics                          #
 # Module:                                                                      #
 #    The sample was tested on an XMVDC16 module.                               #
-# Software:                                                                    #
-#    OS        Linux Fedora Core 12 (32 bit)                                   #
-#    IxOS      6.80 EB (6.80.1101.116)                                         #
-#    IxNetwork 7.40 EB (7.40.929.3)                                            #
-#                                                                              #
 ################################################################################
 import os
 import sys

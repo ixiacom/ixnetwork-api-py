@@ -1,8 +1,7 @@
 # -*- coding: cp1252 -*-
 ################################################################################
-# Version 1.0    $Revision: 1 $                                                #
 #                                                                              #
-#    Copyright © 1997 - 2015 by IXIA                                           #
+#    Copyright © 1997 - 2018 by IXIA                                           #
 #    All Rights Reserved.                                                      #
 #                                                                              #
 ################################################################################
@@ -48,7 +47,7 @@
 #                                                                              #
 # Description:                                                                 #
 #    This script intends to demonstrate how to use NGPF BGP+ API               #
-#    It will create 2 BGP+ topologyes, it will start the emulation and         #
+#    It will create 2 BGP+ topologies, it will start the emulation and         #
 #    than it will retrieve and display few statistics                          #
 # Module:                                                                      #
 #    The sample was tested on an XMVDC16 module.                               #

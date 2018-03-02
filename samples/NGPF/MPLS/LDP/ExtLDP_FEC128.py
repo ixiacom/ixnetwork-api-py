@@ -1,8 +1,8 @@
+# -*- coding: cp1252 -*-
 #!/usr/bin/tclsh
 ################################################################################
-# Version 1.0    $Revision: 1 $                                                #
 #                                                                              #
-#    Copyright  1997 - 2014 by IXIA                                            #
+#    Copyright © 1997 - 2018 by IXIA                                           #
 #    All Rights Reserved.                                                      #
 #                                                                              #
 ################################################################################
@@ -49,22 +49,22 @@
 # Description:                                                                       #
 #    This script intends to demonstrate how to use NGPF LDP API.                     #
 #                                                                                    #
-# About Topology:							             #
+# About Topology:							                                         #
 #          Within toplogy both Provider Edge(PE) and Provider(P) Routers are created.#
 # created.P router is emulated in the front Device Group(DG), which consists of both #
 # OSPF as routing protocol as well as Basic LDP sessions for Transport Label         #
 # Distribution Protocol. The chained DG act as PE Router, where LDP Extended Martini #
 # is configured for VPN Label distibution protocol.Bidirectional L2-L3 Traffic is    #
 # configured in between two CE cloud is created.                                     #
-#	 Script Flow:			                                             #
-#	 1. Configuration of protocols.	                                             #
+#	 Script Flow:			                                                         #
+#	 1. Configuration of protocols.	                                                 #
 #    Configuration flow of the script is as follow:                                  #
-# 		i.    Adding of OSPF router.			        	     #
-# 		ii.   Adding of Network Cloud.      				     #
-# 		iii.  Adding of chain DG.					     #
-# 		iv.   Adding of LDP(basic session) on Front DG 		             #
-# 		v.    Adding of LDP Extended Martini(Targeted sess.) over chained DG.#
-# 		vi.   Adding of LDP PW/VPLS Tunnel over LDP Extended Martini.	     #
+# 		i.    Adding of OSPF router.			        	                         #
+# 		ii.   Adding of Network Cloud.      				                         #
+# 		iii.  Adding of chain DG.					                                 #
+# 		iv.   Adding of LDP(basic session) on Front DG 		                         #
+# 		v.    Adding of LDP Extended Martini(Targeted sess.) over chained DG.        #
+# 		vi.   Adding of LDP PW/VPLS Tunnel over LDP Extended Martini.	             #
 #    2. Start the ldp protocol.                                                      #
 #    3. Retrieve protocol statistics.                                         	     #
 #    4. Retrieve protocol learned info.                                              #

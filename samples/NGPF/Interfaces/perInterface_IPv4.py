@@ -1,13 +1,9 @@
 # -*- coding: cp1252 -*-
 
 ################################################################################
-# Version 1.0    $Revision: 1 $                                                #
 #                                                                              #
-#    Copyright © 1997 - 2014 by IXIA                                           #
+#    Copyright © 1997 - 2018 by IXIA                                           #
 #    All Rights Reserved.                                                      #
-#                                                                              #
-#    Revision Log:                                                             #
-#    10/05/2016 - Jayasri Dhar - created sample                                #
 #                                                                              #
 ################################################################################
 
@@ -56,10 +52,6 @@
 #    and then will assign those to ipv4 interfaces                                 #
 # Module:                                                                          #
 #    The sample was tested on an FLexAP module.                                    #
-# Software:                                                                        #
-#    IxOS      8.01 EA (8.01.1213.5)                                               #
-#    IxNetwork 8.01 EA (8.01.1029.6)                                               #
-#                                                                                  #
 ####################################################################################
 import os
 import sys

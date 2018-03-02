@@ -1,8 +1,7 @@
 # -*- coding: cp1252 -*-
 ################################################################################
-# Version 1.0    $Revision: 1 $                                                #
 #                                                                              #
-#    Copyright © 1997 - 2014 by IXIA                                           #
+#    Copyright © 1997 - 2018 by IXIA                                           #
 #    All Rights Reserved.                                                      #
 #                                                                              #
 ################################################################################
@@ -58,14 +57,14 @@
 #    5. Start IGMP protocol.                                                   #
 #    6. Configure L2-L3 traffic.                                               #
 #    7. Start L2/L3 protocol.                                                  #
-#    8. Retreive protocol statistics                                           #                                                  
-#    9. Retreive  L2/L3 protocol statistics.                                   #
+#    8. Retrieve protocol statistics                                           #                                                  
+#    9. Retrieve  L2/L3 protocol statistics.                                   #
 #   10. Change igmpstart group address and applyOnTheFly                       #                                               
 #   11. Stop protocol and L2/L3 traffic.                                       #
 #   12. Configure few parameters of IGMP host and querier which can be changed #
 #       when protocol is not started.                                          #
 #   13. Start protocol.                                                        #
-#   14. Retreive protocol statistics                                           #
+#   14. Retrieve protocol statistics                                           #
 #   15. Stop all protocols.                                                    #                
 ################################################################################
 import os

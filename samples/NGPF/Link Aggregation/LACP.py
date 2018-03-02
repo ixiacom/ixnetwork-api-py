@@ -1,8 +1,7 @@
 # -*- coding: cp1252 -*-
 ################################################################################
-# Version 1.0    $Revision: 1 $                                                #
 #                                                                              #
-#    Copyright © 1997 - 2015 by IXIA                                           #
+#    Copyright © 1997 - 2018 by IXIA                                           #
 #    All Rights Reserved.                                                      #
 #                                                                              #
 ################################################################################
@@ -48,22 +47,22 @@
 #                                                                              #
 # Description:                                                                 #
 #    This script intends to demonstrate how to use NGPF OSPFv2 API.            #
-#	 Script uses four ports to demonstrate LAG properties	               #
+#	 Script uses four ports to demonstrate LAG properties	                   #
 #                                                                              #
 #    1. It will create 2 LACP topologies, each having an two port which are    #
 #       LAG members. It will then modify the ActorSystemId and ActorKey	for    # 
 #       both the LAG systems                                                   #
 #    2. Start the LACP protocol                                                #
 #    3. Retrieve protocol statistics and LACP per port statistics              #
-#	 4. Disable Synchronization flag on port1 in System1-LACP-LHS          # 
-#	 5. Retrieve protocol statistics and LACP per port statistics          #
-#	 6. Re-enable Synchronization flag on port1 in System1-LACP-LHS        # 
-#	 7. Retrieve protocol statistics and LACP per port statistics          #
-#	 8. Perform StopPDU on port1 in System1-LACP-LHS                       #
-#	 9. Retrieve LACP global learned info              		       #
-#	 10. Perform StopPDU on port1 in System1-LACP-LHS                      # 
-#	 11. Retrieve LACP global learned info                                 #
-#	 12. Stop All protocols                                                # 
+#	 4. Disable Synchronization flag on port1 in System1-LACP-LHS              # 
+#	 5. Retrieve protocol statistics and LACP per port statistics              #
+#	 6. Re-enable Synchronization flag on port1 in System1-LACP-LHS            # 
+#	 7. Retrieve protocol statistics and LACP per port statistics              #
+#	 8. Perform StopPDU on port1 in System1-LACP-LHS                           #
+#	 9. Retrieve LACP global learned info              		                   #
+#	 10. Perform StopPDU on port1 in System1-LACP-LHS                          # 
+#	 11. Retrieve LACP global learned info                                     #
+#	 12. Stop All protocols                                                    # 
 #                                                                              #
 #                                                                              #
 ################################################################################
