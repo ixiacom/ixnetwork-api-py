@@ -30,7 +30,7 @@ Testing
 | We strongly recommend that you test the package installation and unit test execution against the python environments listed in ''tox.ini''.
 | For this you can use `tox <https://testrun.org/tox/>`_ utility. Run the following:
 
-* apt-get install python-tox
+* yum install python-tox
 * tox
 
 Documentation
