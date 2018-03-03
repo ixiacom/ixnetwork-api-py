@@ -1,12 +1,8 @@
 # -*- coding: cp1252 -*-
 ################################################################################
-# Version 1.0    $Revision: 1 $                                                #
 #                                                                              #
-#    Copyright  1997 - 2014 by IXIA                                            #
+#    Copyright © 1997 - 2018 by IXIA                                           #
 #    All Rights Reserved.                                                      #
-#                                                                              #
-#    Revision Log:                                                             #
-#    20/06/2017 - Rupkatha Guha - created sample                               #
 #                                                                              #
 ################################################################################
 
@@ -76,10 +72,6 @@
 #   12. Stop L2-L3 traffic.                                                    #
 #   13. Stopallprotocols.                                                      #
 #                                                                              #                                                                                
-# Ixia Software:                                                               #
-#    IxOS      8.30 EB                                                         #
-#    IxNetwork 8.30 EB                                                         #
-#                                                                              #
 ################################################################################
 import os
 import sys

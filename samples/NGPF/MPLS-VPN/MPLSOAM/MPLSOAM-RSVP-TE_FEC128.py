@@ -46,28 +46,33 @@
 ################################################################################
 #                                                                              #
 # Description:                                                                 #
-#    This script intends to demonstrate how to use NGPF MPLSOAM API.           #
+#    This script intends to demonstrate how to use NGPF MPLSOAM with RSCP-TE   #
+#    using Python                                                              #
+#    with FEC128.                                                              #
 #                                                                              #
-#    1. It will create 2 MPLSOAM topologies with mplsoam having singalling     #
-#       protocol ldp,each having an ipv4 prefixpools   				  #
-#       and loopback device group behind the network group(NG) with            # 
-#       loopback interface on it. A loopback device group(DG) behind network   # 
-#       group is needed to support applib traffic.                             #
-#    2. Start the ldp protocol.                                                #
+# About Topology:                                                              #
+#                                                                              #
+#     On each port, it will create one topology of MPLSOAM with LDPv4 FEC 128. #
+#     In each topology, there will be two device groups and two network groups.#
+#     First device group will simulate as a RSVP-TE basic P router and other as#
+#     LDPv4 targeted PE router with pseudo wire FEC 128 is configured.         #
+#     After first device group, there is one network group in which IPv4 prefix#
+#     pools is configured. The other network group has mac pools which is      #
+#     simulated as CE router and also is used as traffic end point.            #
+#                                                                              #
+# Script Flow:                                                                 #
+#    1. Configuration of protocols as described in topology.                   #
+#    2. Start the LDP protocol.                                                #
 #    3. Retrieve protocol statistics.                                          #
 #    4. Retrieve protocol learned info.                                        #
-#    5. Disbale/Enable the ldp FECs and change label & apply change on the fly #
-#    6. Retrieve protocol learned info again and notice the difference with    #
-#       previouly retrieved learned info.                                      #
+#    5. Change LDP PW/VPLS labels & apply change on the fly                    #
+#    6. Retrieve protocol learned info again.                                  #
 #    7. Configure L2-L3 traffic.                                               #
-#    8. Configure application traffic.                                         #
-#    9. Start the L2-L3 traffic.                                               #
-#   10. Start the application traffic.                                         #
-#   11. Retrieve Appilcation traffic stats.                                    #
-#   12. Retrieve L2-L3 traffic stats.                                          #
-#   13. Stop L2-L3 traffic.                                                    #
-#   14. Stop Application traffic.                                              #
-#   15. Stop all protocols.                                                    #                                                                                
+#    8. Start the L2-L3 traffic.                                               #
+#   11. Retrieve L2-L3 traffic stats.                                          #
+#   12. Stop L2-L3 traffic.                                                    #
+#   13. Stop all protocols.                                                    #
+#                                                                              #                                                                                
 ################################################################################
 import os
 import sys
@@ -128,16 +133,14 @@ import IxNetwork
 # Give chassis/client/ixNetwork server port/ chassis port HW port information
 # below
 #################################################################################
-ixTclServer = '10.216.22.32'
-ixTclPort   = '8009'
-ports       = [('10.216.100.12', '2', '15',), ('10.216.100.12', '2', '16',)]
+ixTclServer = '10.216.108.103'
+ixTclPort   = '8039'
+ports       = [('10.216.100.12', '2', '11',), ('10.216.100.12', '2', '12',)]
 
 # get IxNet class
 ixNet = IxNetwork.IxNet()
 print("connecting to IxNetwork client")
 ixNet.connect(ixTclServer, '-port', ixTclPort, '-version', '8.30', '-setAttribute', 'strict')
-#ixNet.connect(ixTclServer, '-port', ixTclPort, '-version', '8.30')
-# cleaning up the old configfile, and creating an empty config
 print("cleaning up the old configfile, and creating an empty config")
 ixNet.execute('newConfig')
 
@@ -192,8 +195,6 @@ ixNet.setAttribute(ixNet.getAttribute(mac2, '-mac') + '/singleValue',
     '-value', '18:03:73:C7:6C:01')
 ixNet.commit()
 
-#print ("ixNet.help ::ixNet::OBJ-/topology/deviceGroup/ethernet")
-#print (ixNet.help('::ixNet::OBJ-/topology/deviceGroup/ethernet'))
 
 print("Add ipv4")
 ixNet.add(mac1, 'ipv4')
@@ -221,26 +222,192 @@ ixNet.setMultiAttribute(ixNet.getAttribute(ip1, '-resolveGateway') + '/singleVal
 ixNet.setMultiAttribute(ixNet.getAttribute(ip2, '-resolveGateway') + '/singleValue', '-value', 'true')
 ixNet.commit()
 
-#print ("ixNet.help ::ixNet::OBJ-/topology/deviceGroup/ethernet/ipv4")
-#print (ixNet.help('::ixNet::OBJ-/topology/deviceGroup/ethernet/ipv4'))
 
-print("Adding ldp over IP4 stacks")
-ixNet.add(ip1, 'ldpBasicRouter')
-ixNet.add(ip2, 'ldpBasicRouter')
+print("Adding rsvp-te over IP4 stacks")
+ixNet.add(ip1, 'rsvpteIf')
+ixNet.add(ip2, 'rsvpteIf')
+ixNet.commit()
+
+print("Adding ospfv2 over IP4 stacks")
+ixNet.add(ip1, 'ospfv2')
+ixNet.add(ip2, 'ospfv2')
+ixNet.commit()
+
+#remoteip1 = ixNet.getAttribute(rsvpig1, '-remoteIp')
+#remoteip2 = ixNet.getAttribute(rsvpig2, '-remoteIp')
+
+
+rsvpte1 = ixNet.getList(ip1, 'rsvpteIf')[0]
+rsvpte2 = ixNet.getList(ip2, 'rsvpteIf')[0]
+
+ospf1 = ixNet.getList(ip1, 'ospfv2')[0]
+ospf2 = ixNet.getList(ip2, 'ospfv2')[0]
+
+print ("Changing network type to point to point on ospfv2")
+ixNet.setMultiAttribute(ixNet.getAttribute(ospf1, '-networkType') + '/singleValue', '-value', 'pointtopoint')
+ixNet.setMultiAttribute(ixNet.getAttribute(ospf2, '-networkType') + '/singleValue', '-value', 'pointtopoint')
+ixNet.commit()
+
+print("Renaming the topologies and the device groups")
+ixNet.setAttribute(topo1, '-name', 'RSVP-TE Topology')
+ixNet.setAttribute(topo2, '-name', 'RSVP-TE Topology')
+
+ixNet.setAttribute(t1dev1, '-name', 'P Router 1')
+ixNet.setAttribute(t2dev1, '-name', 'P Router 2')
 ixNet.commit()
 
 
-print("Adding mplsoam over IP4 stacks")
-ixNet.add(ip1, 'mplsOam')
-ixNet.add(ip2, 'mplsOam')
+print("Adding NetworkGroup behind RSVP-TE DG")
+
+ixNet.add(t1dev1, 'networkGroup')
+ixNet.add(t2dev1, 'networkGroup')
 ixNet.commit()
 
-ldp1 = ixNet.getList(ip1, 'ldpBasicRouter')[0]
-ldp2 = ixNet.getList(ip2, 'ldpBasicRouter')[0]
+networkGroup1 = ixNet.getList(t1dev1, 'networkGroup')[0]
+networkGroup2 = ixNet.getList(t2dev1, 'networkGroup')[0]
 
-mplsoam1 = ixNet.getList(ip1, 'mplsOam')[0]
-mplsoam2 = ixNet.getList(ip2, 'mplsOam')[0]
+ixNet.setAttribute(networkGroup1, '-name', 'RSVP-TE_1_Network_Group1')
+ixNet.setAttribute(networkGroup2, '-name', 'RSVP-TE_2_Network_Group1')
+ixNet.setAttribute(networkGroup1, '-multiplier', '1')
+ixNet.setAttribute(networkGroup2, '-multiplier', '1')
+ixNet.commit()
 
+print("Adding IPv4 prefix pools in Network Groups")
+ixNet.add(networkGroup1, 'ipv4PrefixPools')
+ixNet.add(networkGroup2, 'ipv4PrefixPools')
+ixNet.commit()
+
+ipV4PrefixPools1 = ixNet.getList(networkGroup1, 'ipv4PrefixPools')[0]
+ipV4PrefixPools2 = ixNet.getList(networkGroup2, 'ipv4PrefixPools')[0]
+
+
+print("Configuring network address and prefic length of IPV4 prefix pools")
+prefixLength1 = ixNet.getAttribute(ipV4PrefixPools1, '-prefixLength')
+prefixLength2 = ixNet.getAttribute(ipV4PrefixPools2, '-prefixLength')
+ixNet.setMultiAttribute(prefixLength1, '-clearOverlays',  'false', '-pattern', 'singleValue')
+ixNet.setMultiAttribute(prefixLength2, '-clearOverlays',  'false', '-pattern', 'singleValue')
+ixNet.commit()
+
+singleValue1 = ixNet.add(prefixLength1, 'singleValue')
+singleValue2 = ixNet.add(prefixLength2, 'singleValue')
+ixNet.setMultiAttribute(singleValue1, '-value', '32')
+ixNet.setMultiAttribute(singleValue2, '-value', '32')
+ixNet.commit()
+
+networkAddress1 = ixNet.getAttribute(ipV4PrefixPools1, '-networkAddress')
+networkAddress2 = ixNet.getAttribute(ipV4PrefixPools2, '-networkAddress')
+ixNet.setMultiAttribute(networkAddress1, '-clearOverlays', 'false', '-pattern', 'counter')
+ixNet.setMultiAttribute(networkAddress2, '-clearOverlays', 'false', '-pattern', 'counter')
+ixNet.commit()
+
+counter1 = ixNet.add(networkAddress1, 'counter')
+counter2 = ixNet.add(networkAddress2, 'counter')
+ixNet.setMultiAttribute(counter1, '-step', '0.0.0.1', '-start', '2.2.2.2', '-direction', 'increment')
+ixNet.setMultiAttribute(counter2, '-step', '0.0.0.1', '-start', '1.1.1.1', '-direction', 'increment')
+ixNet.commit()
+
+
+print("Adding Device Group behind Network Groups")
+ixNet.add(networkGroup1, 'deviceGroup')
+ixNet.add(networkGroup2, 'deviceGroup')
+ixNet.commit()
+
+t1dev2 = ixNet.getList(networkGroup1, 'deviceGroup')[0]
+t2dev2 = ixNet.getList(networkGroup2, 'deviceGroup')[0]
+
+print("Configuring the multipliers")
+ixNet.setAttribute(t1dev2, '-multiplier', '1')
+ixNet.setAttribute(t2dev2, '-multiplier', '1')
+ixNet.commit()
+
+ixNet.setAttribute(t1dev2, '-name', 'PE Router 1')
+ixNet.setAttribute(t2dev2, '-name', 'PE Router 2')
+ixNet.commit()
+
+print("Adding loopback in second device group of both topologies")
+ixNet.add(t1dev2, 'ipv4Loopback')
+ixNet.add(t2dev2, 'ipv4Loopback')
+ixNet.commit()
+
+ipv4Loopback1 = ixNet.getList(t1dev2, 'ipv4Loopback')[0]
+ipv4Loopback2 = ixNet.getList(t2dev2, 'ipv4Loopback')[0]
+
+
+print("Assigning ipv4 address on Loop Back Interface")
+addressSet1 = ixNet.getAttribute(ipv4Loopback1, '-address')
+ixNet.setMultiAttribute(addressSet1, '-clearOverlays', 'false', '-pattern', 'counter')
+addressSet2 = ixNet.getAttribute(ipv4Loopback2, '-address')
+ixNet.setMultiAttribute(addressSet2, '-clearOverlays', 'false', '-pattern', 'counter')
+
+ixNet.commit()
+
+counter1 = ixNet.add(addressSet1, 'counter')
+counter2 = ixNet.add(addressSet2, 'counter')
+ixNet.setMultiAttribute(counter1, '-step', '0.0.0.1', '-start', '2.2.2.2', '-direction', 'increment')
+ixNet.setMultiAttribute(counter2, '-step', '0.0.0.1', '-start', '1.1.1.1', '-direction', 'increment')
+ixNet.commit()
+
+ixNet.add(ipv4Loopback1, 'rsvpteLsps')
+ixNet.add(ipv4Loopback2, 'rsvpteLsps')
+ixNet.commit()
+
+print("Adding targeted RSVP-TE LSPs over these loopbacks")
+rsvplsp1 = ixNet.getList(ipv4Loopback1, 'rsvpteLsps')[0]
+rsvplsp2 = ixNet.getList(ipv4Loopback2, 'rsvpteLsps')[0]
+
+rsvpig1 = ixNet.getList(rsvplsp1, 'rsvpP2PIngressLsps')[0]
+rsvpig2 = ixNet.getList(rsvplsp2, 'rsvpP2PIngressLsps')[0]
+
+rsvpeg1 = ixNet.getList(rsvplsp1, 'rsvpP2PEgressLsps')[0]
+rsvpeg2 = ixNet.getList(rsvplsp2, 'rsvpP2PEgressLsps')[0]
+
+
+remoteip1 = ixNet.getAttribute(rsvpig1, '-remoteIp')
+remoteip2 = ixNet.getAttribute(rsvpig2, '-remoteIp')
+
+
+print ("Enabling LDP Router capabilities for mplsOam")
+ixNet.setMultiAttribute(ixNet.getAttribute(rsvpig1, '-enableBfdMpls') + '/singleValue', '-value', 'true')
+ixNet.setMultiAttribute(ixNet.getAttribute(rsvpig2, '-enableBfdMpls') + '/singleValue', '-value', 'true')
+ixNet.setMultiAttribute(ixNet.getAttribute(rsvpig1, '-enableLspPing') + '/singleValue', '-value', 'true')
+ixNet.setMultiAttribute(ixNet.getAttribute(rsvpig2, '-enableLspPing') + '/singleValue', '-value', 'true')
+ixNet.setMultiAttribute(ixNet.getAttribute(rsvpeg1, '-enableReplyingLspPing') + '/singleValue', '-value', 'true')
+ixNet.setMultiAttribute(ixNet.getAttribute(rsvpeg2, '-enableReplyingLspPing') + '/singleValue', '-value', 'true')
+
+ixNet.setAttribute(remoteip1 + '/singleValue', '-value', '1.1.1.1')
+ixNet.setAttribute(remoteip2 + '/singleValue', '-value', '2.2.2.2')
+
+ixNet.commit()
+
+print("Adding targeted LDPv4 router over these loopbacks")
+ixNet.add(ipv4Loopback1, 'ldpTargetedRouter')
+ixNet.add(ipv4Loopback2, 'ldpTargetedRouter')
+ixNet.commit()
+
+ldpTargetedRouterV41 = ixNet.getList(ipv4Loopback1, 'ldpTargetedRouter')[0]
+ldpTargetedRouterV42 = ixNet.getList(ipv4Loopback2, 'ldpTargetedRouter')[0]
+
+print("Configuring DUT IP in LDPv4 targeted peers")
+iPAddress1 = ixNet.getAttribute(ldpTargetedRouterV41 + '/ldpTargetedPeer', '-iPAddress')
+iPAddress2 = ixNet.getAttribute(ldpTargetedRouterV42 + '/ldpTargetedPeer', '-iPAddress')
+ixNet.setMultiAttribute(iPAddress1, '-clearOverlays', 'false', '-pattern', 'counter')
+ixNet.setMultiAttribute(iPAddress2, '-clearOverlays', 'false', '-pattern', 'counter')
+ixNet.commit()
+
+counter1 = ixNet.add(iPAddress1, 'counter')
+counter2 = ixNet.add(iPAddress2, 'counter')
+ixNet.setMultiAttribute(counter1, '-step', '0.0.0.1', '-start', '1.1.1.1', '-direction', 'increment')
+ixNet.setMultiAttribute(counter2, '-step', '0.0.0.1', '-start', '2.2.2.2', '-direction', 'increment')
+ixNet.commit()
+
+
+print("Adding mplsoam on the loopback interface of both topologies")
+ixNet.add(ipv4Loopback1, 'mplsOam')
+ixNet.add(ipv4Loopback2, 'mplsOam')
+ixNet.commit()
+
+mplsoam1 = ixNet.getList(ipv4Loopback1, 'mplsOam')[0]
+mplsoam2 = ixNet.getList(ipv4Loopback2, 'mplsOam')[0]
 
 print ("Enabling periodic ping on mplsOam")
 ixNet.setMultiAttribute(ixNet.getAttribute(mplsoam1, '-enablePeriodicPing') + '/singleValue', '-value', 'true')
@@ -257,110 +424,84 @@ ixNet.setMultiAttribute(ixNet.getAttribute(mplsoam1, '-echoRequestInterval') + '
 ixNet.setMultiAttribute(ixNet.getAttribute(mplsoam2, '-echoRequestInterval') + '/singleValue', '-value', '5000')
 ixNet.commit()
 
-print("Renaming the topologies and the device groups")
-ixNet.setAttribute(topo1, '-name', 'MPLSOAM Topology 1')
-ixNet.setAttribute(topo2, '-name', 'MPLSOAM Topology 2')
 
-ixNet.setAttribute(t1dev1, '-name', 'MPLSOAM Topology 1 Router')
-ixNet.setAttribute(t2dev1, '-name', 'MPLSOAM Topology 2 Router')
+remoteip1 = ixNet.getAttribute(rsvpig1, '-remoteIp')
+remoteip2 = ixNet.getAttribute(rsvpig2, '-remoteIp')
+
+print("Adding LDP PW/VPLS over these targeted routers")
+ixNet.add(ldpTargetedRouterV41, 'ldppwvpls')
+ixNet.add(ldpTargetedRouterV42, 'ldppwvpls')
 ixNet.commit()
 
-#print ("ixNet.help ::ixNet::OBJ-/topology/deviceGroup/ethernet/ipv4/ldp")
-#print (ixNet.help('::ixNet::OBJ-/topology/deviceGroup/ethernet/ipv4/ldp'))
+ldppwvpls1 = ixNet.getList(ldpTargetedRouterV41, 'ldppwvpls')[0]
+ldppwvpls2 = ixNet.getList(ldpTargetedRouterV42, 'ldppwvpls')[0]
 
-print ("Enabling LDP Router capabilities for mplsOam")
-ixNet.setMultiAttribute(ixNet.getAttribute(ldp1, '-enableBfdMplsLearnedLsp') + '/singleValue', '-value', 'true')
-ixNet.setMultiAttribute(ixNet.getAttribute(ldp2, '-enableBfdMplsLearnedLsp') + '/singleValue', '-value', 'true')
-ixNet.setMultiAttribute(ixNet.getAttribute(ldp1, '-enableLspPingLearnedLsp') + '/singleValue', '-value', 'true')
-ixNet.setMultiAttribute(ixNet.getAttribute(ldp2, '-enableLspPingLearnedLsp') + '/singleValue', '-value', 'true')
 ixNet.commit()
 
-print("Adding NetworkGroup behind ldp DG")
-ixNet.execute('createDefaultStack', t1devices, 'ipv4PrefixPools')
-ixNet.execute('createDefaultStack', t2devices, 'ipv4PrefixPools')
+print("Enabling C-Bit in LDP PW/VPLS")
+ixNet.setMultiAttribute(ixNet.getAttribute(ldppwvpls1, '-cBitEnabled') + '/singleValue', '-value', 'true')
+ixNet.setMultiAttribute(ixNet.getAttribute(ldppwvpls2, '-cBitEnabled') + '/singleValue', '-value', 'true')
+ixNet.commit()
+ixNet.commit()
 
-networkGroup1 = ixNet.getList(t1dev1, 'networkGroup')[0]
-networkGroup2 = ixNet.getList(t2dev1, 'networkGroup')[0]
+print("Enabling cv negotiation in LDP PW/VPLS")
+ixNet.setMultiAttribute(ixNet.getAttribute(ldppwvpls1, '-enableCCCVNegotiation') + '/singleValue', '-value', 'true')
+ixNet.setMultiAttribute(ixNet.getAttribute(ldppwvpls2, '-enableCCCVNegotiation') + '/singleValue', '-value', 'true')
+ixNet.commit()
+ixNet.commit()
 
-ixNet.setAttribute(networkGroup1, '-name', 'LDP_1_Network_Group1')
-ixNet.setAttribute(networkGroup2, '-name', 'LDP_2_Network_Group1')
-ixNet.setAttribute(networkGroup1, '-multiplier', '10')
-ixNet.setAttribute(networkGroup2, '-multiplier', '10')
+ixNet.commit()
+print("Enabling Auto Peer Address in LDP PW/VPLS")
+ixNet.setAttribute(ldppwvpls1, '-autoPeerId', 'true')
+ixNet.setAttribute(ldppwvpls2, '-autoPeerId', 'true')
 ixNet.commit()
 
 
-print("Enable Reply to LSP Ping on FEC")
-ipV4PrefixPools1  = ixNet.getList(networkGroup1, 'ipv4PrefixPools')[0]
-ldpFEC1 = ixNet.getList(ipV4PrefixPools1, 'ldpFECProperty')[0]
 
-ipV4PrefixPools2 = ixNet.getList(networkGroup2, 'ipv4PrefixPools')[0]
-ldpFEC2 = ixNet.getList(ipV4PrefixPools2, 'ldpFECProperty')[0]
-
-ixNet.setMultiAttribute(ixNet.getAttribute(ldpFEC1, '-enableReplyingLspPing') + '/singleValue', '-value', 'true')
-ixNet.setMultiAttribute(ixNet.getAttribute(ldpFEC2, '-enableReplyingLspPing') + '/singleValue', '-value', 'true')
-
-# Add ipv4 loopback1 for applib traffic
-print("Adding ipv4 loopback1 for applib traffic")
-chainedDg1 = ixNet.add(networkGroup1, 'deviceGroup')
-ixNet.setMultiAttribute(chainedDg1, '-multiplier', '10', '-name', 'Device Group 3')
-ixNet.commit()
-chainedDg1 = ixNet.remapIds(chainedDg1)[0]
-
-loopback1 = ixNet.add(chainedDg1, 'ipv4Loopback')
-ixNet.setMultiAttribute(loopback1, '-stackedLayers', [], '-name', 'IPv4 Loopback 1')
+print("Adding Network Group behind each PE routers")
+ixNet.add(t1dev2, 'networkGroup')
+ixNet.add(t2dev2, 'networkGroup')
 ixNet.commit()
 
-connector1 = ixNet.add(loopback1, 'connector')
-ixNet.setMultiAttribute(connector1, '-connectedTo', networkGroup1 + '/ipv4PrefixPools:1')
-ixNet.commit()
-connector1 = ixNet.remapIds(connector1)[0]
+networkGroup3 = ixNet.getList(t1dev2, 'networkGroup')[0]
+networkGroup4 = ixNet.getList(t2dev2, 'networkGroup')[0]
 
-addressSet1 = ixNet.getAttribute(loopback1, '-address')
-ixNet.setMultiAttribute(addressSet1, '-clearOverlays', 'false', '-pattern', 'counter')
+ixNet.setAttribute(networkGroup3, '-name', 'MAC_POOL_1')
+ixNet.setAttribute(networkGroup4, '-name', 'MAC_POOL_2')
 ixNet.commit()
 
-addressSet1 = ixNet.add(addressSet1, 'counter')
-ixNet.setMultiAttribute(addressSet1, '-step', '0.1.0.0', '-start', '200.1.0.0', '-direction', 'increment')
-ixNet.commit()
-addressSet1 = ixNet.remapIds(addressSet1)[0]
-
-# Add ipv4 loopback2 for applib traffic
-print("Adding ipv4 loopback2 for applib traffic")
-chainedDg2 = ixNet.add(networkGroup2, 'deviceGroup')
-ixNet.setMultiAttribute(chainedDg2, '-multiplier', '10', '-name', 'Device Group 4')
-ixNet.commit()
-chainedDg2 = ixNet.remapIds(chainedDg2)[0]
-
-loopback2 = ixNet.add(chainedDg2, 'ipv4Loopback')
-ixNet.setMultiAttribute(loopback2, '-stackedLayers', [], '-name', 'IPv4 Loopback 2')
+print("Adding MAC pools in Network Groups")
+ixNet.add(networkGroup3, 'macPools')
+ixNet.add(networkGroup4, 'macPools')
 ixNet.commit()
 
-connector2 = ixNet.add(loopback2, 'connector')
-ixNet.setMultiAttribute(connector2, '-connectedTo', networkGroup2 + '/ipv4PrefixPools:1')
-ixNet.commit()
-connector1 = ixNet.remapIds(connector2)[0]
+macPools1 = ixNet.getList(networkGroup3, 'macPools')
+macPools2 = ixNet.getList(networkGroup4, 'macPools')
 
-addressSet2 = ixNet.getAttribute(loopback2, '-address')
-ixNet.setMultiAttribute(addressSet2, '-clearOverlays', 'false', '-pattern', 'counter')
+print("All configuration is completed..Wait for 5 seconds...")
+time.sleep(5)
+
+print("Enabling transport labels on ldp interface")
+root = ixNet.getRoot()
+globalsV = ixNet.getList(root, 'globals')[0]
+globalTopo = ixNet.getList(globalsV, 'topology')[0]
+globalLdp = ixNet.getList(globalTopo, 'ldpBasicRouter')[0]
+ixNet.setMultiAttribute(ixNet.getAttribute(globalLdp, '-transportLabels') + '/singleValue', '-value', 'true')
 ixNet.commit()
 
-addressSet2 = ixNet.add(addressSet2, 'counter')
-ixNet.setMultiAttribute(addressSet2, '-step', '0.1.0.0', '-start', '201.1.0.0', '-direction', 'increment')
-ixNet.commit()
-addressSet2 = ixNet.remapIds(addressSet2)[0]
 
 ################################################################################
-# 2. Start all protocol and wait for 60 seconds
+# 2. Start all protocols and wait for 120 seconds
 ################################################################################
 print("Starting protocols and waiting for 60 seconds for protocols to come up")
 ixNet.execute('startAllProtocols')
-time.sleep(60)
+time.sleep(120)
 
 ################################################################################
 # 3. Retrieve protocol statistics.
 ################################################################################
 print ("Fetching all Protocol Summary Stats\n")
-viewPage  = '::ixNet::OBJ-/statistics/view:"Protocols Summary"/page'
+viewPage  = '::ixNet::OBJ-/statistics/view:"MPLSOAM IF Per Port"/page'
 statcap   = ixNet.getAttribute(viewPage, '-columnCaptions')
 for statValList in ixNet.getAttribute(viewPage, '-rowValues') :
     for  statVal in statValList :
@@ -389,37 +530,19 @@ for v in values :
 # end for
 print("***************************************************")
 
+
 ################################################################################
-# 5.Change the labels of FEC element And apply changes On The Fly (OTF).
+# 5.Change the LDP PW/VPLS labels And apply changes On The Fly (OTF).
 ################################################################################
-ipV4PrefixPools1  = ixNet.getList(networkGroup1, 'ipv4PrefixPools')[0]
-ldpFEC1           = ixNet.getList(ipV4PrefixPools1, 'ldpFECProperty')[0]
-activeMultivalue1 = ixNet.getAttribute(ldpFEC1, '-active')
-ixNet.setAttribute(activeMultivalue1 + '/singleValue', '-value', 'false')
+print("Changing labels of LDPv4 PW/VPLS Range")
+label2 = ixNet.getAttribute(ldppwvpls2, '-label')
+ixNet.setMultiAttribute(label2, '-clearOverlays', 'false', '-pattern', 'counter')
 ixNet.commit()
-ixNet.setAttribute(activeMultivalue1 + '/singleValue', '-value', 'true')
-ixNet.commit()
-
-ipV4PrefixPools2  = ixNet.getList(networkGroup2, 'ipv4PrefixPools')[0]
-ldpFEC2           = ixNet.getList(ipV4PrefixPools2, 'ldpFECProperty')[0]
-activeMultivalue2 = ixNet.getAttribute(ldpFEC2, '-active')
-ixNet.setAttribute(activeMultivalue2 + '/singleValue', '-value', 'false')
-ixNet.commit()
-print("Changing Lables for FECs")
-labelMultiValue2   = ixNet.getAttribute(ldpFEC2, '-labelValue')
-ixNet.setMultiAttribute(labelMultiValue2, '-clearOverlays', 'false', '-pattern', 'counter')
-ixNet.commit()
-labelSet =ixNet.add(labelMultiValue2, 'counter')
-ixNet.setMultiAttribute(labelSet, '-step', '5', '-start', '120', '-direction', 'increment')
-ixNet.setAttribute(activeMultivalue2 + '/singleValue', '-value', 'true')
+labelSet =ixNet.add(label2,'counter')
+ixNet.setMultiAttribute(labelSet, '-step', '1', '-start', '500', '-direction', 'increment')
+#ixNet.setAttribute(activeMultivalue1 + '/singleValue', '-value', 'true')
 ixNet.commit()
 
-
-ixNet.setAttribute(ipV4PrefixPools2, '-numberOfAddresses', '3')
-print ("Changing Label increment mode")
-labelModeMultiValue = ixNet.getAttribute(ldpFEC2, '-labelIncrementMode')
-ixNet.setAttribute(labelModeMultiValue + '/singleValue', '-value', 'increment')
-ixNet.commit()
 globalObj = ixNet.getRoot() + '/globals'
 topology  = globalObj + '/topology'
 print ("Applying changes on the fly")
@@ -428,7 +551,7 @@ try :
 except :
     print("error in applying on the fly change")
 # end try/expect
-time.sleep(5)
+time.sleep(20)
 
 ###############################################################################
 # 6. Retrieve protocol learned info again and compare with
@@ -452,13 +575,13 @@ print("***************************************************")
 print("Congfiguring L2-L3 Traffic Item")
 trafficItem1 = ixNet.add(ixNet.getRoot() + '/traffic', 'trafficItem')
 ixNet.setMultiAttribute(trafficItem1, '-name', 'Traffic Item 1',
-    '-roundRobinPacketOrdering', 'false', '-trafficType', 'ipv4')
+    '-roundRobinPacketOrdering', 'false', '-trafficType', 'ethernetVlan')
 ixNet.commit()
 
 trafficItem1 = ixNet.remapIds(trafficItem1)[0]
 endpointSet1 = ixNet.add(trafficItem1, 'endpointSet')
-source       = [networkGroup1 + '/ipv4PrefixPools:1']
-destination  = [networkGroup2 + '/ipv4PrefixPools:1']
+source       = [networkGroup1]
+destination  = [networkGroup2]
 
 ixNet.setMultiAttribute(endpointSet1,
     '-name',                  'EndpointSet-1',
@@ -478,72 +601,6 @@ ixNet.setMultiAttribute(trafficItem1 + '/tracking',
     '-protocolOffset', 'Root.0',
     '-values',         [])
 ixNet.commit()
-
-################################################################################
-# 8. Configure Application traffic
-################################################################################
-print("Configuring Applib traffic")
-trafficItem2 = ixNet.add(ixNet.getRoot() + '/traffic', 'trafficItem')
-
-ixNet.setMultiAttribute(trafficItem2,
-    '-name',                     'Traffic Item 2',             
-    '-trafficItemType',          'applicationLibrary',
-    '-roundRobinPacketOrdering', 'false',
-    '-trafficType',              'ipv4ApplicationTraffic')
-ixNet.commit()
-trafficItem2 = ixNet.remapIds(trafficItem2)[0]
-
-endpointSet2 = ixNet.add(trafficItem2, 'endpointSet')
-source_app   = [ixNet.getList(t1dev1, 'networkGroup')[0]]
-destin_app   = [ixNet.getList(t2dev1, 'networkGroup')[0]]
-
-ixNet.setMultiAttribute(endpointSet2,
-    '-name',                  "EndpointSet-2",
-    '-multicastDestinations', [],
-    '-scalableSources',       [],
-    '-multicastReceivers',    [],
-    '-scalableDestinations',  [],
-    '-ngpfFilters',           [],
-    '-trafficGroups',         [],
-    '-sources',               source_app,
-    '-destinations',          destin_app)    
-ixNet.commit()
-
-endpointSet2 = ixNet.remapIds(endpointSet2)[0]
-
-appLibProfile = ixNet.add(trafficItem2, 'appLibProfile')
-flows_configured  = ['Bandwidth_BitTorrent_File_Download',
-                            'Bandwidth_eDonkey',
-                            'Bandwidth_HTTP',
-                            'Bandwidth_IMAPv4',
-                            'Bandwidth_POP3',
-                            'Bandwidth_Radius',
-                            'Bandwidth_Raw',
-                            'Bandwidth_Telnet',
-                            'Bandwidth_uTorrent_DHT_File_Download',
-                            'BBC_iPlayer',
-                            'BBC_iPlayer_Radio',
-                            'BGP_IGP_Open_Advertise_Routes',
-                            'BGP_IGP_Withdraw_Routes',
-                            'Bing_Search',
-                            'BitTorrent_Ares_v217_File_Download',
-                            'BitTorrent_BitComet_v126_File_Download',
-                            'BitTorrent_Blizzard_File_Download',
-                            'BitTorrent_Cisco_EMIX',
-                            'BitTorrent_Enterprise',
-                            'BitTorrent_File_Download',
-                            'BitTorrent_LimeWire_v5516_File_Download',
-                            'BitTorrent_RMIX_5M']
-
-ixNet.setMultiAttribute (appLibProfile,
-    '-enablePerIPStats', 'false',
-    '-objectiveDistribution', 'applyFullObjectiveToEachPort',
-    '-configuredFlows', flows_configured)
-ixNet.commit()
-appLibProfile = ixNet.remapIds(appLibProfile)[0]
-
-print ('ixNet.help(ixNet.getRoot() + \'/traffic\')')
-print (ixNet.help(ixNet.getRoot() + '/traffic'))
 
 ###############################################################################
 # 9. Apply and start L2/L3 traffic
@@ -568,23 +625,6 @@ ixNet.execute('startStatefulTraffic', ixNet.getRoot() + '/traffic')
 print ('Let traffic run for 1 minute')
 time.sleep(60)
 
-###############################################################################
-# 11. Retrieve Applib traffic item statistics
-###############################################################################
-print ('Verifying all the applib traffic stats')
-viewPage = '::ixNet::OBJ-/statistics/view:"Application Traffic Item Statistics"/page'
-statcap = ixNet.getAttribute(viewPage, '-columnCaptions')
-for statValList in ixNet.getAttribute(viewPage, '-rowValues') :
-    for  statVal in statValList :
-        print("***************************************************")
-        index = 0
-        for satIndv in statVal :
-            print("%-34s:%s" % (statcap[index], satIndv))
-            index = index + 1
-        # end for
-    # end for
-# end for
-print("***************************************************")
 
 ###############################################################################
 # 12. Retrieve L2/L3 traffic item statistics
@@ -607,9 +647,9 @@ print("***************************************************")
 ################################################################################
 # 13. Stop applib traffic
 ################################################################################
-print ('Stopping applib traffic')
-ixNet.execute('stopStatefulTraffic', ixNet.getRoot() + '/traffic')
-time.sleep(5)
+#print ('Stopping applib traffic')
+#ixNet.execute('stopStatefulTraffic', ixNet.getRoot() + '/traffic')
+#time.sleep(5)
 
 ################################################################################
 # 14. Stop L2/L3 traffic

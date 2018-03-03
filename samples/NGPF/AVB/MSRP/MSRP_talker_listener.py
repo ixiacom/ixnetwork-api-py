@@ -1,7 +1,7 @@
+# -*- coding: cp1252 -*-
 ################################################################################
-# Version 1.0    $Revision: 1 $                                                #
 #                                                                              #
-#    Copyright © 1997 - 2014 by IXIA                                           #
+#    Copyright © 1997 - 2018 by IXIA                                           #
 #    All Rights Reserved.                                                      #
 #                                                                              #
 ################################################################################
@@ -10,7 +10,7 @@
 #                                                                              #
 #                                LEGAL  NOTICE:                                #
 #                                ==============                                #
-# The following code and documentation (hereintime.sleep("the script") is an        #
+# The following code and documentation (hereintime.sleep("the script") is an   #
 # example script for demonstration purposes only.                              #
 # The script is not a standard commercial product offered by Ixia and have     #
 # been developed and is being provided for use only as indicated herein. The   #
@@ -38,7 +38,7 @@
 # script or any part thereof. The user acknowledges that although Ixia may     #
 # from time to time and in its sole discretion provide maintenance or support  #
 # services for the script any such services are subject to the warranty and    #
-# damages limitations forth herein and will not obligate Ixia to provide   #
+# damages limitations forth herein and will not obligate Ixia to provide       #
 # any additional maintenance or support services.                              #
 #                                                                              #
 ################################################################################

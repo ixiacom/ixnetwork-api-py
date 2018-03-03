@@ -1,8 +1,9 @@
+# -*- coding: cp1252 -*-
 ################################################################################
-# Version 1.0    $Revision: 1 $                                                #
 #                                                                              #
-#    Copyright ? 1997 - 2014 by IXIA                                           #
+#    Copyright © 1997 - 2018 by IXIA                                           #
 #    All Rights Reserved.                                                      #
+#                                                                              #
 #                                                                              #
 ################################################################################
 ################################################################################
@@ -44,8 +45,8 @@
 ################################################################################
 #                                                                              #
 # Description:                                                                 #
-# The script creates and configures a topology with one ANCP DG.	       #
-# Set/Get multivalue parameters.					       #
+# The script creates and configures a topology with one ANCP DG.	           #
+# Set/Get multivalue parameters.					                           #
 # Start/Stop protocols.                                                        #
 # Module:                                                                      #
 #    The sample was tested on an XMVDC module.                                 #

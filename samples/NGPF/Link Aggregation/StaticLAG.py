@@ -1,8 +1,7 @@
 # -*- coding: cp1252 -*-
 ################################################################################
-# Version 1.0    $Revision: 1 $                                                #
 #                                                                              #
-#    Copyright © 1997 - 2015 by IXIA                                           #
+#    Copyright © 1997 - 2018 by IXIA                                           #
 #    All Rights Reserved.                                                      #
 #                                                                              #
 ################################################################################
@@ -48,19 +47,19 @@
 #                                                                              #
 # Description:                                                                 #
 #    This script intends to demonstrate how to use NGPF StaticLag API.         #
-#	 Script uses four ports to demonstrate LAG properties                  #
+#	 Script uses four ports to demonstrate LAG properties                      #
 #                                                                              #
 #    1. It will create 2 StaticLag topologies, each having two ports which are #
 #       LAG members. It will then modify the Lag Id for both the LAG systems   # 
 #    2. Start the StaticLag protocol.                                          #
 #    3. Retrieve protocol statistics and StaticLag per port statistics         #
-#	 4. Perform Simulate Link Down on port1 in System1-StaticLag-LHS       # 
-#	 5. Retrieve protocol statistics, StaticLag per port statistics	       #
+#	 4. Perform Simulate Link Down on port1 in System1-StaticLag-LHS           # 
+#	 5. Retrieve protocol statistics, StaticLag per port statistics	           #
 #    6. Retrieve StaticLag global learned info                                 #
-#	 7. Perform Simulate Link Up on port1 in System1-StaticLag-LHS         # 
-#	 8. Retrieve protocol statistics and StaticLag per port statistics     #
+#	 7. Perform Simulate Link Up on port1 in System1-StaticLag-LHS             # 
+#	 8. Retrieve protocol statistics and StaticLag per port statistics         #
 #    9. Retrieve StaticLag global learned info                                 #
-#	 10. Stop All protocols                                                # 
+#	 10. Stop All protocols                                                    # 
 #                                                                              # 
 #                                                                              #
 ################################################################################

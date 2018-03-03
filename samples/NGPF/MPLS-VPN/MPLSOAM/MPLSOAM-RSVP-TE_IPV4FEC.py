@@ -49,7 +49,7 @@
 #    This script intends to demonstrate how to use NGPF MPLSOAM API.           #
 #                                                                              #
 #    1. It will create 2 MPLSOAM topologies with mplsoam having singalling     #
-#       protocol ldp,each having an ipv4 prefixpools   				  #
+#       protocol ldp,each having an ipv4 prefixpools   				           #
 #       and loopback device group behind the network group(NG) with            # 
 #       loopback interface on it. A loopback device group(DG) behind network   # 
 #       group is needed to support applib traffic.                             #
@@ -68,6 +68,7 @@
 #   13. Stop L2-L3 traffic.                                                    #
 #   14. Stop Application traffic.                                              #
 #   15. Stop all protocols.                                                    #                                                                                
+#                                                                              #
 ################################################################################
 import os
 import sys
@@ -128,9 +129,9 @@ import IxNetwork
 # Give chassis/client/ixNetwork server port/ chassis port HW port information
 # below
 #################################################################################
-ixTclServer = '10.216.22.32'
-ixTclPort   = '8009'
-ports       = [('10.216.100.12', '2', '15',), ('10.216.100.12', '2', '16',)]
+ixTclServer = '10.216.108.103'
+ixTclPort   = '8039'
+ports       = [('10.216.100.12', '2', '9',), ('10.216.100.12', '2', '10',)]
 
 # get IxNet class
 ixNet = IxNetwork.IxNet()
@@ -224,23 +225,54 @@ ixNet.commit()
 #print ("ixNet.help ::ixNet::OBJ-/topology/deviceGroup/ethernet/ipv4")
 #print (ixNet.help('::ixNet::OBJ-/topology/deviceGroup/ethernet/ipv4'))
 
-print("Adding ldp over IP4 stacks")
-ixNet.add(ip1, 'ldpBasicRouter')
-ixNet.add(ip2, 'ldpBasicRouter')
+print("Adding rsvp-te over IP4 stacks")
+ixNet.add(ip1, 'rsvpteIf')
+ixNet.add(ip2, 'rsvpteIf')
 ixNet.commit()
 
+ixNet.add(ip1, 'rsvpteLsps')
+ixNet.add(ip2, 'rsvpteLsps')
+ixNet.commit()
 
 print("Adding mplsoam over IP4 stacks")
 ixNet.add(ip1, 'mplsOam')
 ixNet.add(ip2, 'mplsOam')
 ixNet.commit()
 
-ldp1 = ixNet.getList(ip1, 'ldpBasicRouter')[0]
-ldp2 = ixNet.getList(ip2, 'ldpBasicRouter')[0]
+print("Adding ospfv2 over IP4 stacks")
+ixNet.add(ip1, 'ospfv2')
+ixNet.add(ip2, 'ospfv2')
+ixNet.commit()
+
+rsvpte1 = ixNet.getList(ip1, 'rsvpteIf')[0]
+rsvpte2 = ixNet.getList(ip2, 'rsvpteIf')[0]
+
+rsvplsp1 = ixNet.getList(ip1, 'rsvpteLsps')[0]
+rsvplsp2 = ixNet.getList(ip2, 'rsvpteLsps')[0]
+
+rsvpig1 = ixNet.getList(rsvplsp1, 'rsvpP2PIngressLsps')[0]
+rsvpig2 = ixNet.getList(rsvplsp2, 'rsvpP2PIngressLsps')[0]
+
+rsvpeg1 = ixNet.getList(rsvplsp1, 'rsvpP2PEgressLsps')[0]
+rsvpeg2 = ixNet.getList(rsvplsp2, 'rsvpP2PEgressLsps')[0]
+
+
+remoteip1 = ixNet.getAttribute(rsvpig1, '-remoteIp')
+remoteip2 = ixNet.getAttribute(rsvpig2, '-remoteIp')
+
+label1 = ixNet.getAttribute(rsvpte1, '-labelSpaceStart')
+label2 = ixNet.getAttribute(rsvpte2, '-labelSpaceStart')
 
 mplsoam1 = ixNet.getList(ip1, 'mplsOam')[0]
 mplsoam2 = ixNet.getList(ip2, 'mplsOam')[0]
 
+ospf1 = ixNet.getList(ip1, 'ospfv2')[0]
+ospf2 = ixNet.getList(ip2, 'ospfv2')[0]
+
+print ("Changing network type to point to point on ospfv2")
+ixNet.setMultiAttribute(ixNet.getAttribute(ospf1, '-networkType') + '/singleValue', '-value', 'pointtopoint')
+ixNet.setMultiAttribute(ixNet.getAttribute(ospf2, '-networkType') + '/singleValue', '-value', 'pointtopoint')
+ixNet.commit()
 
 print ("Enabling periodic ping on mplsOam")
 ixNet.setMultiAttribute(ixNet.getAttribute(mplsoam1, '-enablePeriodicPing') + '/singleValue', '-value', 'true')
@@ -269,35 +301,30 @@ ixNet.commit()
 #print (ixNet.help('::ixNet::OBJ-/topology/deviceGroup/ethernet/ipv4/ldp'))
 
 print ("Enabling LDP Router capabilities for mplsOam")
-ixNet.setMultiAttribute(ixNet.getAttribute(ldp1, '-enableBfdMplsLearnedLsp') + '/singleValue', '-value', 'true')
-ixNet.setMultiAttribute(ixNet.getAttribute(ldp2, '-enableBfdMplsLearnedLsp') + '/singleValue', '-value', 'true')
-ixNet.setMultiAttribute(ixNet.getAttribute(ldp1, '-enableLspPingLearnedLsp') + '/singleValue', '-value', 'true')
-ixNet.setMultiAttribute(ixNet.getAttribute(ldp2, '-enableLspPingLearnedLsp') + '/singleValue', '-value', 'true')
+ixNet.setMultiAttribute(ixNet.getAttribute(rsvpig1, '-enableBfdMpls') + '/singleValue', '-value', 'true')
+ixNet.setMultiAttribute(ixNet.getAttribute(rsvpig2, '-enableBfdMpls') + '/singleValue', '-value', 'true')
+ixNet.setMultiAttribute(ixNet.getAttribute(rsvpig1, '-enableLspPing') + '/singleValue', '-value', 'true')
+ixNet.setMultiAttribute(ixNet.getAttribute(rsvpig2, '-enableLspPing') + '/singleValue', '-value', 'true')
+ixNet.setMultiAttribute(ixNet.getAttribute(rsvpeg1, '-enableReplyingLspPing') + '/singleValue', '-value', 'true')
+ixNet.setMultiAttribute(ixNet.getAttribute(rsvpeg2, '-enableReplyingLspPing') + '/singleValue', '-value', 'true')
+
+ixNet.setAttribute(remoteip1 + '/singleValue', '-value', '20.20.20.1')
+ixNet.setAttribute(remoteip2 + '/singleValue', '-value', '20.20.20.2')
+
 ixNet.commit()
 
-print("Adding NetworkGroup behind ldp DG")
+print("Adding NetworkGroup behind RSVP-TE DG")
 ixNet.execute('createDefaultStack', t1devices, 'ipv4PrefixPools')
 ixNet.execute('createDefaultStack', t2devices, 'ipv4PrefixPools')
 
 networkGroup1 = ixNet.getList(t1dev1, 'networkGroup')[0]
 networkGroup2 = ixNet.getList(t2dev1, 'networkGroup')[0]
 
-ixNet.setAttribute(networkGroup1, '-name', 'LDP_1_Network_Group1')
-ixNet.setAttribute(networkGroup2, '-name', 'LDP_2_Network_Group1')
+ixNet.setAttribute(networkGroup1, '-name', 'RSVP-TE_1_Network_Group1')
+ixNet.setAttribute(networkGroup2, '-name', 'RSVP-TE_2_Network_Group1')
 ixNet.setAttribute(networkGroup1, '-multiplier', '10')
 ixNet.setAttribute(networkGroup2, '-multiplier', '10')
 ixNet.commit()
-
-
-print("Enable Reply to LSP Ping on FEC")
-ipV4PrefixPools1  = ixNet.getList(networkGroup1, 'ipv4PrefixPools')[0]
-ldpFEC1 = ixNet.getList(ipV4PrefixPools1, 'ldpFECProperty')[0]
-
-ipV4PrefixPools2 = ixNet.getList(networkGroup2, 'ipv4PrefixPools')[0]
-ldpFEC2 = ixNet.getList(ipV4PrefixPools2, 'ldpFECProperty')[0]
-
-ixNet.setMultiAttribute(ixNet.getAttribute(ldpFEC1, '-enableReplyingLspPing') + '/singleValue', '-value', 'true')
-ixNet.setMultiAttribute(ixNet.getAttribute(ldpFEC2, '-enableReplyingLspPing') + '/singleValue', '-value', 'true')
 
 # Add ipv4 loopback1 for applib traffic
 print("Adding ipv4 loopback1 for applib traffic")
@@ -350,11 +377,11 @@ ixNet.commit()
 addressSet2 = ixNet.remapIds(addressSet2)[0]
 
 ################################################################################
-# 2. Start all protocol and wait for 60 seconds
+# 2. Start all protocol and wait for 90 seconds
 ################################################################################
 print("Starting protocols and waiting for 60 seconds for protocols to come up")
 ixNet.execute('startAllProtocols')
-time.sleep(60)
+time.sleep(90)
 
 ################################################################################
 # 3. Retrieve protocol statistics.
@@ -390,36 +417,16 @@ for v in values :
 print("***************************************************")
 
 ################################################################################
-# 5.Change the labels of FEC element And apply changes On The Fly (OTF).
+# 5.Change the labels of RSVP TE labels And apply changes On The Fly (OTF).
 ################################################################################
-ipV4PrefixPools1  = ixNet.getList(networkGroup1, 'ipv4PrefixPools')[0]
-ldpFEC1           = ixNet.getList(ipV4PrefixPools1, 'ldpFECProperty')[0]
-activeMultivalue1 = ixNet.getAttribute(ldpFEC1, '-active')
-ixNet.setAttribute(activeMultivalue1 + '/singleValue', '-value', 'false')
+print("Changing Lables")
+ixNet.setMultiAttribute(label2, '-clearOverlays', 'false', '-pattern', 'counter')
 ixNet.commit()
-ixNet.setAttribute(activeMultivalue1 + '/singleValue', '-value', 'true')
-ixNet.commit()
-
-ipV4PrefixPools2  = ixNet.getList(networkGroup2, 'ipv4PrefixPools')[0]
-ldpFEC2           = ixNet.getList(ipV4PrefixPools2, 'ldpFECProperty')[0]
-activeMultivalue2 = ixNet.getAttribute(ldpFEC2, '-active')
-ixNet.setAttribute(activeMultivalue2 + '/singleValue', '-value', 'false')
-ixNet.commit()
-print("Changing Lables for FECs")
-labelMultiValue2   = ixNet.getAttribute(ldpFEC2, '-labelValue')
-ixNet.setMultiAttribute(labelMultiValue2, '-clearOverlays', 'false', '-pattern', 'counter')
-ixNet.commit()
-labelSet =ixNet.add(labelMultiValue2, 'counter')
-ixNet.setMultiAttribute(labelSet, '-step', '5', '-start', '120', '-direction', 'increment')
-ixNet.setAttribute(activeMultivalue2 + '/singleValue', '-value', 'true')
+labelSet =ixNet.add(label2,'counter')
+ixNet.setMultiAttribute(labelSet, '-step', '1', '-start', '120', '-direction', 'increment')
+#ixNet.setAttribute(activeMultivalue1 + '/singleValue', '-value', 'true')
 ixNet.commit()
 
-
-ixNet.setAttribute(ipV4PrefixPools2, '-numberOfAddresses', '3')
-print ("Changing Label increment mode")
-labelModeMultiValue = ixNet.getAttribute(ldpFEC2, '-labelIncrementMode')
-ixNet.setAttribute(labelModeMultiValue + '/singleValue', '-value', 'increment')
-ixNet.commit()
 globalObj = ixNet.getRoot() + '/globals'
 topology  = globalObj + '/topology'
 print ("Applying changes on the fly")
@@ -428,7 +435,7 @@ try :
 except :
     print("error in applying on the fly change")
 # end try/expect
-time.sleep(5)
+time.sleep(20)
 
 ###############################################################################
 # 6. Retrieve protocol learned info again and compare with

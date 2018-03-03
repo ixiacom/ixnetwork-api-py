@@ -1,16 +1,12 @@
 # -*- coding: cp1252 -*-
-# ###############################################################################
-# Version 1.0    $Revision: 1 $                                                #
+################################################################################
 #                                                                              #
-#    Copyright © 1997 - 2015 by IXIA                                           #
+#    Copyright © 1997 - 2018 by IXIA                                           #
 #    All Rights Reserved.                                                      #
 #                                                                              #
-#    Revision Log:                                                             #
-#    22/01/2015 - Sumit Deb - created sample                                   #
-#                                                                              #
-# ###############################################################################
+# ##############################################################################
 
-# ###############################################################################
+# ##############################################################################
 #                                                                              #
 #                                LEGAL  NOTICE:                                #
 #                                ==============                                #
@@ -45,15 +41,15 @@
 # damages limitations set forth herein and will not obligate Ixia to provide   #
 # any additional maintenance or support services.                              #
 #                                                                              #
-# ###############################################################################
+################################################################################
 
-# ###############################################################################
+# ##############################################################################
 #                                                                              #
 # Description:                                                                 #
 #    This script intends to demonstrate how to use NGPF OSPFv2 API.            #
 #                                                                              #
 #    1. Create 2 interfaces with OSPFv2 enabled, each having 1 OSPFv2          #
-#       router with 1 route-range per router.			               #
+#       router with 1 route-range per router.							       #
 #    2. Start the ospfv2 protocol.                                             #
 #    3. Retrieve protocol statistics.                                          #
 #    4. Retrieve protocol learned info.                                        #                                      
@@ -61,12 +57,8 @@
 #    6. Start the L2-L3 traffic.                                               #
 #    7. Retrieve L2-L3 traffic stats.                                          #
 #    8. Stop L2-L3 traffic.                                                    #
-#    9. Stop all protocols.                                                    #                                                                                    #              
-# Ixia Softwares:                                                              #
-#    IxOS      6.80 EA (6.80.1100.7)                                           #
-#    IxNetwork 7.40 EA (7.40.929.15)                                           #
-#                                                                              #
-# ###############################################################################
+#    9. Stop all protocols.                                                    #                                                                       
+################################################################################
 import os
 import sys
 import time

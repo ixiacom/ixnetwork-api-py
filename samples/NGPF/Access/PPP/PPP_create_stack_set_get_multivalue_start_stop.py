@@ -1,7 +1,7 @@
+# -*- coding: cp1252 -*-
 ################################################################################
-# Version 1.0    $Revision: 1 $                                                #
 #                                                                              #
-#    Copyright ? 1997 - 2014 by IXIA                                           #
+#    Copyright © 1997 - 2018 by IXIA                                           #
 #    All Rights Reserved.                                                      #
 #                                                                              #
 #                                                                              #
@@ -47,8 +47,8 @@
 ################################################################################
 #                                                                              #
 # Description:                                                                 #
-# The script creates and configures 2 PPP stacks.	                       #
-# Set/Get multivalue parameters.					       #
+# The script creates and configures 2 PPP stacks.	                           #
+# Set/Get multivalue parameters.					                           #
 # Start/Stop protocols.                                                        #
 # Module:                                                                      #
 #    The sample was tested on an FlexAP10G16S module.                          #

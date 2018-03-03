@@ -1,8 +1,7 @@
 # -*- coding: cp1252 -*-
 ################################################################################
-# Version 1.0    $Revision: 1 $                                                #
 #                                                                              #
-#    Copyright © 1997 - 2014 by IXIA                                           #
+#    Copyright © 1997 - 2018 by IXIA                                           #
 #    All Rights Reserved.                                                      #
 #                                                                              #
 ################################################################################
@@ -53,18 +52,18 @@
 #       topology and loopback device group behind the network group(NG) with   # 
 #       loopback interface on it. A loopback device group(DG) behind network   # 
 #       group is needed to support applib traffic.                             #
-#    2. Start the pim protocol.                                                #
+#    2. Start the PIM protocol.                                                #
 #    3. Retrieve protocol statistics.                                          #
 #    4. Retrieve protocol learned info.                                        #
 #    5. Modify the Rangetype from "SG" to "*G" in the First and Second PIM     #
 #       router.And apply changes On The Fly (OTF)                              #
 #    6. Retrieve protocol learned info again and notice the difference with    #
-#       previouly retrieved learned info.                                      #
+#       previously retrieved learned info.                                     #
 #    7. Configure L2-L3 traffic.                                               #
 #    8. Configure application traffic.                                         #
 #    9. Start the L2-L3 traffic.                                               #
 #   10. Start the application traffic.                                         #
-#   11. Retrieve Appilcation traffic stats.                                    #
+#   11. Retrieve Application traffic stats.                                    #
 #   12. Retrieve L2-L3 traffic stats.                                          #
 #   13. Stop L2-L3 traffic.                                                    #
 #   14. Stop Application traffic.                                              #

@@ -1,11 +1,8 @@
+# -*- coding: cp1252 -*-
 ################################################################################
-# Version 1.0    $Revision: 1 $                                                #
 #                                                                              #
-#    Copyright ? 1997 - 2014 by IXIA                                           #
+#    Copyright © 1997 - 2018 by IXIA                                           #
 #    All Rights Reserved.                                                      #
-#                                                                              #
-#    Revision Log:                                                             #
-#    10/2/2014 - Vlad Mihai - created sample                         #
 #                                                                              #
 ################################################################################
 
@@ -54,10 +51,6 @@
 # Start/Stop protocols.                                                        #
 # Module:                                                                      #
 #    The sample was tested on an FlexAP10G16S module.                          #
-# Software:                                                                    #
-#    IxOS      6.80 EA                                                         #
-#    IxNetwork 7.40 EA                                                         #
-#                                                                              #
 ################################################################################
 
 
