@@ -1,7 +1,7 @@
 # -*- coding: cp1252 -*-
 ################################################################################
 #                                                                              #
-#    Copyright © 1997 - 2018 by IXIA                                           #
+#    Copyright 1997 - 2018 by IXIA Keysight                                    #
 #    All Rights Reserved.                                                      #
 #                                                                              #
 #                                                                              #
@@ -53,9 +53,10 @@
 #                                                                              #
 ################################################################################
 # import Python packages
-
+import os,sys
+ixNetPath  = r'C:\Program Files (x86)\Ixia\IxNetwork\8.50.0.310-EB\API\Python'
+sys.path.append(ixNetPath)
 import time
-import os
 from IxNetwork import IxNet
 
 # create an instance of the IxNet class
@@ -63,7 +64,7 @@ ixNet = IxNet()
 
 # create absolute path for the config and load it
 print ("Connecting to server: localhost")
-ixNet.connect('localhost', '-port', 8009, '-version', '7.40')
+ixNet.connect('localhost', '-port', 8009, '-version', '8.50')
 
 print ("Cleaning up IxNetwork...")
 ixNet.execute('newConfig')
@@ -79,19 +80,20 @@ ixNet.commit()
 vports = ixNet.getList(ixNet.getRoot(), 'vport')
 
 print ('Add chassis in IxNetwork...')
-chassis = '10.205.15.184'
+#chassis = '10.205.15.184'
+chassis = "10.36.110.27"
 availableHardwareId = ixNet.getRoot()+'availableHardware'
 ixNet.add(availableHardwareId, 'chassis', '-hostname', chassis)
 ixNet.commit()
 
 print ("Assigning ports from " + chassis + " to "+ str(vports) + " ...")
-ixNet.setAttribute(vports[0], '-connectedTo', '/availableHardware/chassis:"10.205.15.184"/card:9/port:2')
+ixNet.setAttribute(vports[0], '-connectedTo', '/availableHardware/chassis:"10.36.110.27"/card:1/port:15')
 ixNet.commit()
 
 print ("Rebooting ports...")
 jobs = [ixNet.setAsync().execute('resetPortCpu', vp) for vp in vports]
 for j in jobs:
-    print j + ' ' + ixNet.getResult(j)
+    print (j + ' ' + ixNet.getResult(j))
 print ("Done... Ports are rebooted...")
 print ("")
 time.sleep(5)
@@ -174,11 +176,11 @@ vlan = ixNet.getList(eth, 'vlan')[0]
 vlanID_mv      = ixNet.getAttribute(vlan, '-vlanId')
 
 print ('\nTo see childs and attributes of an object just type: "ixNet.help(current_object)". The output should be like this:')
-print ixNet.help(vlanID_mv)
+print (ixNet.help(vlanID_mv))
 
 print ('\nAvailable patterns for this multivalue can be found out by using getAttribute on the "-availablePatterns" attribute.')
 print ("Output for:  ixNet.getAttribute(vlanID1_mv, '-availablePatterns')")
-print ixNet.getAttribute(vlanID_mv, '-availablePatterns')
+print (ixNet.getAttribute(vlanID_mv, '-availablePatterns'))
 
 print ('\nSelected pattern: counter. Set this pattern under "-pattern" attribute with setAttribute.')
 print ("ixNet.setAttribute(vlanID_mv, '-pattern', 'singleValue')")

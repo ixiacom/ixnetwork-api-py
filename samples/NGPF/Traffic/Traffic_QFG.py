@@ -1,7 +1,7 @@
 # -*- coding: cp1252 -*-
 ################################################################################
 #                                                                              #
-#    Copyright © 1997 - 2018 by IXIA                                           #
+#    Copyright 1997 - 2018 by IXIA Keysight                                    #
 #    All Rights Reserved.                                                      #
 #                                                                              #
 ################################################################################
@@ -79,13 +79,13 @@ ixNet.connect(py.ixTclServer, '-port', py.ixTclPort, '-version', '7.40')
 ################################################################################
 # Cleaning up IxNetwork
 ################################################################################
-print "Cleaning up IxNetwork..."
+print ("Cleaning up IxNetwork...")
 ixNet.execute('newConfig')
 
 ################################################################################
 # Adding ports to configuration
 ################################################################################
-print "Adding ports to configuration"
+print ("Adding ports to configuration")
 root = ixNet.getRoot()
 ixNet.add(root, 'vport')
 ixNet.add(root, 'vport')
@@ -97,7 +97,7 @@ vport2 = vPorts[1]
 ################################################################################
 # Adding IPv4 endpoints to configuration
 ################################################################################
-print "Add topologies"
+print ("Add topologies")
 ixNet.add(root, 'topology')
 ixNet.add(root, 'topology')
 ixNet.commit()
@@ -105,12 +105,12 @@ ixNet.commit()
 topo1 = ixNet.getList(root, 'topology')[0]
 topo2 = ixNet.getList(root, 'topology')[1]
 
-print "Add ports to topologies"
+print ("Add ports to topologies")
 ixNet.setAttribute(topo1, '-vports', vport1)
 ixNet.setAttribute(topo2, '-vports', vport2)
 ixNet.commit()
 
-print "Add device groups to topologies"
+print ("Add device groups to topologies")
 ixNet.add(topo1, 'deviceGroup')
 ixNet.add(topo2, 'deviceGroup')
 ixNet.commit()
@@ -118,7 +118,7 @@ ixNet.commit()
 dg1 = ixNet.getList(topo1, 'deviceGroup')[0]
 dg2 = ixNet.getList(topo2, 'deviceGroup')[0]
 
-print "Add Ethernet stacks to device groups"
+print ("Add Ethernet stacks to device groups")
 ixNet.add(dg1, 'ethernet')
 ixNet.add(dg2, 'ethernet')
 ixNet.commit()
@@ -126,7 +126,7 @@ ixNet.commit()
 mac1 = ixNet.getList(dg1, 'ethernet')[0]
 mac2 = ixNet.getList(dg2, 'ethernet')[0]
 
-print "Add ipv4 stacks to Ethernets"
+print ("Add ipv4 stacks to Ethernets")
 ixNet.add(mac1, 'ipv4')
 ixNet.add(mac2, 'ipv4')
 ixNet.commit()
@@ -134,7 +134,7 @@ ixNet.commit()
 ipv4_1 = ixNet.getList(mac1, 'ipv4')[0]
 ipv4_2 = ixNet.getList(mac2, 'ipv4')[0]
 
-print "Setting multi values for ipv4 addresses"
+print ("Setting multi values for ipv4 addresses")
 ixNet.setMultiAttribute(ixNet.getAttribute(ipv4_1, '-address') + '/counter', '-start', '22.1.1.1', '-step', '0.0.1.0')
 ixNet.setMultiAttribute(ixNet.getAttribute(ipv4_1, '-gatewayIp') + '/counter', '-start', '22.1.1.2', '-step', '0.0.1.0')
 ixNet.setMultiAttribute(ixNet.getAttribute(ipv4_1, '-resolveGateway') + '/singleValue', '-value', 'true')
@@ -147,7 +147,7 @@ ixNet.commit()
 # Assign ports 
 ################################################################################
 vports = ixNet.getList(ixNet.getRoot(), 'vport')
-print "Assigning ports to " + str(vports) + " ..."
+print ("Assigning ports to " + str(vports) + " ...")
 assignPorts = ixNet.execute('assignPorts', py.ports, [], ixNet.getList("/","vport"), True)
 if assignPorts != vports:
     raise TestFailedError("FAILED assigning ports. Got %s" %assignPorts)
@@ -157,21 +157,21 @@ else:
 ################################################################################
 # Start All Protocols
 ################################################################################
-print "Starting All Protocols"
+print ("Starting All Protocols")
 ixNet.execute('startAllProtocols')
-print "Sleep 30sec for protocols to start"
+print ("Sleep 30sec for protocols to start")
 time.sleep(30)
 
 ################################################################################
 # Create a Basic Quick Flow Group
 ################################################################################
-print "######################"
-print "## Traffic Samples ##"
-print "######################"
-print ''
+print ("######################")
+print ("## Traffic Samples ##")
+print ("######################")
+print ('')
 
 def addBasicQuickFlowGroup(ixNet, srcPort, dstPort ):
-    print "- add quick flow group"
+    print ("- add quick flow group")
     quick_flow_group = ixNet.add('/traffic', 'trafficItem')
 
     ################################################################################
@@ -218,25 +218,25 @@ def addBasicQuickFlowGroup(ixNet, srcPort, dstPort ):
 ################################################################################
 # Add the Quick Flow Group, Generate, Apply and Start the traffic
 ################################################################################
-print "- Add Quick Flow Group"
+print ("- Add Quick Flow Group")
 addBasicQuickFlowGroup(ixNet, vport1, vport2)
-print "- Generate Traffic"
+print ("- Generate Traffic")
 ti1 = ixNet.getList('/traffic', 'trafficItem')
 ixNet.execute('generate', ti1)
-print "- Apply Traffic"
+print ("- Apply Traffic")
 ixNet.execute('apply', '/traffic')
-print "- Start Traffic"
+print ("- Start Traffic")
 ixNet.execute('start', '/traffic')
-print "Sleep 30sec then stop traffic"
+print ("Sleep 30sec then stop traffic")
 time.sleep(30)
-print "- Stop Traffic"
+print ("- Stop Traffic")
 ixNet.execute('stop', '/traffic')
 
 ################################################################################
 # Stop All Protocols
 ################################################################################
-print "Stop All Protocols"
+print ("Stop All Protocols")
 ixNet.execute('stopAllProtocols')
-print "Sleep 30sec for protocols to stop"
+print ("Sleep 30sec for protocols to stop")
 time.sleep(30)
 

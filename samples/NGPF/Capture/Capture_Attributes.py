@@ -1,7 +1,7 @@
 # -*- coding: cp1252 -*-
 ################################################################################
 #                                                                              #
-#    Copyright © 1997 - 2018 by IXIA                                           #
+#    Copyright 1997 - 2018 by IXIA Keysight                                    #
 #    All Rights Reserved.                                                      #
 #                                                                              #
 ################################################################################
@@ -83,14 +83,14 @@ ixNet.connect(py.ixTclServer, '-port', py.ixTclPort, '-version', '7.40')
 # Cleaning up IxNetwork
 ################################################################################
 
-print "Cleaning up IxNetwork..."
+print ("Cleaning up IxNetwork...")
 ixNet.execute('newConfig')
 
 ################################################################################
 # Adding ports to configuration
 ################################################################################
 
-print "Adding ports to configuration"
+print ("Adding ports to configuration")
 root = ixNet.getRoot()
 ixNet.add(root, 'vport')
 ixNet.add(root, 'vport')
@@ -103,7 +103,7 @@ vport2 = vPorts[1]
 # Configuring IPv4 Endpoints
 ################################################################################
 
-print "Add topologies"
+print ("Add topologies")
 ixNet.add(root, 'topology')
 ixNet.add(root, 'topology')
 ixNet.commit()
@@ -111,12 +111,12 @@ ixNet.commit()
 topo1 = ixNet.getList(root, 'topology')[0]
 topo2 = ixNet.getList(root, 'topology')[1]
 
-print "Add ports to topologies"
+print ("Add ports to topologies")
 ixNet.setAttribute(topo1, '-vports', vport1)
 ixNet.setAttribute(topo2, '-vports', vport2)
 ixNet.commit()
 
-print "Add device groups to topologies"
+print ("Add device groups to topologies")
 ixNet.add(topo1, 'deviceGroup')
 ixNet.add(topo2, 'deviceGroup')
 ixNet.commit()
@@ -124,7 +124,7 @@ ixNet.commit()
 dg1 = ixNet.getList(topo1, 'deviceGroup')[0]
 dg2 = ixNet.getList(topo2, 'deviceGroup')[0]
 
-print "Add ethernet stacks to device groups"
+print ("Add ethernet stacks to device groups")
 ixNet.add(dg1, 'ethernet')
 ixNet.add(dg2, 'ethernet')
 ixNet.commit()
@@ -132,7 +132,7 @@ ixNet.commit()
 mac1 = ixNet.getList(dg1, 'ethernet')[0]
 mac2 = ixNet.getList(dg2, 'ethernet')[0]
 
-print "Add ipv4 stacks to ethernets"
+print ("Add ipv4 stacks to ethernets")
 ixNet.add(mac1, 'ipv4')
 ixNet.add(mac2, 'ipv4')
 ixNet.commit()
@@ -140,7 +140,7 @@ ixNet.commit()
 ipv4_1 = ixNet.getList(mac1, 'ipv4')[0]
 ipv4_2 = ixNet.getList(mac2, 'ipv4')[0]
 
-print "Setting multi values for ipv4 addresses"
+print ("Setting multi values for ipv4 addresses")
 ixNet.setMultiAttribute(ixNet.getAttribute(ipv4_1, '-address') + '/counter', '-start', '22.1.1.1', '-step', '0.0.1.0')
 ixNet.setMultiAttribute(ixNet.getAttribute(ipv4_1, '-gatewayIp') + '/counter', '-start', '22.1.1.2', '-step', '0.0.1.0')
 ixNet.setMultiAttribute(ixNet.getAttribute(ipv4_1, '-resolveGateway') + '/singleValue', '-value', 'true')
@@ -153,8 +153,8 @@ ixNet.commit()
 # Creating Traffic for IPv4
 ################################################################################
 
-print ''
-print "Creating Traffic for IPv4"
+print ('')
+print ("Creating Traffic for IPv4")
 
 ixNet.add(ixNet.getRoot() + '/traffic', 'trafficItem')
 ixNet.commit()
@@ -211,7 +211,7 @@ ixNet.commit()
 ################################################################################
 
 vports = ixNet.getList(ixNet.getRoot(), 'vport')
-print "Assigning ports to " + str(vports) + " ..."
+print ("Assigning ports to " + str(vports) + " ...")
 assignPorts = ixNet.execute('assignPorts', py.ports, [], ixNet.getList("/","vport"), True)
 if assignPorts != vports:
     raise TestFailedError("FAILED assigning ports. Got %s" %assignPorts)
@@ -222,21 +222,21 @@ else:
 # Start All Protocols
 ################################################################################
 
-print "Starting All Protocols"
+print ("Starting All Protocols")
 ixNet.execute('startAllProtocols')
-print "Sleep 30sec for protocols to start"
+print ("Sleep 30sec for protocols to start")
 time.sleep(30)
 
 ################################################################################
 # Enable Captures
 ################################################################################
 
-print "Enable Control capture"
+print ("Enable Control capture")
 captureObj1 = ixNet.getList(vport1, 'capture')[0]
 ixNet.setAttribute(captureObj1, '-softwareEnabled', 'true')
 ixNet.commit()
 
-print "Enable Data capture"
+print ("Enable Data capture")
 captureObj2 = ixNet.getList(vport2, 'capture')[0]
 ixNet.setAttribute(captureObj2, '-hardwareEnabled', 'true')
 ixNet.commit()
@@ -245,20 +245,20 @@ ixNet.commit()
 # Configure slice size and buffer for Captures
 ################################################################################
 
-print "Set slice size for Control capture"
+print ("Set slice size for Control capture")
 ixNet.setAttribute(captureObj1, '-controlSliceSize', 64)
 
-print "Set slice size for Data capture"
+print ("Set slice size for Data capture")
 ixNet.setAttribute(captureObj2, '-sliceSize', 128)
 ixNet.commit()
 
-print "Setting Control Buffer"
+print ("Setting Control Buffer")
 ixNet.setAttribute(captureObj1, '-controlBufferBehaviour', 'bufferAfterStopCircular')
 ixNet.setAttribute(captureObj1, '-controlBufferBehaviour', 'bufferLiveNonCircular')
 ixNet.setAttribute(captureObj1, '-controlBufferSize', 33)
 ixNet.commit()
 
-print "Setting Data Buffer"
+print ("Setting Data Buffer")
 ixNet.setAttribute(captureObj2, '-captureMode', 'captureTriggerMode')
 ixNet.commit()
 
@@ -266,7 +266,7 @@ ixNet.commit()
 # Configure start trigger and filter for Captures
 ################################################################################
 
-print "Configure Filter Pallette - it will be used for Start Trigger and  Filter"
+print ("Configure Filter Pallette - it will be used for Start Trigger and  Filter")
 filterPallette = ixNet.getList(captureObj2, 'filterPallette')[0]
 ixNet.setMultiAttribute(filterPallette,
         '-DA1', '00:12:01:00:00:07',
@@ -287,17 +287,17 @@ ixNet.setMultiAttribute(filterPallette,
         '-SAMask2', '00 00 00 00 00 00')
 ixNet.commit()
 
-print "Configure Data - Start Trigger"
+print ("Configure Data - Start Trigger")
 ixNet.setAttribute(captureObj2 + '/trigger', '-captureTriggerExpressionString', 'SA1')
 
-print "Configure Data - Filter"
+print ("Configure Data - Filter")
 ixNet.setAttribute(captureObj2 + '/filter', '-captureFilterExpressionString', 'SA1')
 
-print "Configure Control - Start Trigger"
+print ("Configure Control - Start Trigger")
 ixNet.setAttribute(captureObj1, '-controlCaptureFilter', 'arp and greater 1 and less 1024 and not (ether src 00:11:01:00:00:0a and ether dst ff:ff:ff:ff:ff:ff)')
 ixNet.commit()
 
-print "Configure Control - Filter"
+print ("Configure Control - Filter")
 ixNet.setAttribute(captureObj1, '-controlCaptureTrigger', 'arp and greater 1 and less 1024 and not (ether src 00:11:01:00:00:0a and ether dst ff:ff:ff:ff:ff:ff)')
 ixNet.commit()
 
@@ -313,16 +313,16 @@ ixNet.execute('apply', r + '/traffic')
 # Stop All Protocols
 ################################################################################
 
-print "Stopping All Protocols"
+print ("Stopping All Protocols")
 ixNet.execute('stopAllProtocols')
-print "Sleep 30sec for protocols to stop"
+print ("Sleep 30sec for protocols to stop")
 time.sleep(30)
 
 ################################################################################
 # Start Captures
 ################################################################################
 
-print "Starting capture"
+print ("Starting capture")
 ixNet.execute('startCapture')
 time.sleep(30)
 
@@ -330,9 +330,9 @@ time.sleep(30)
 # Start All Protocols
 ################################################################################
 
-print "Starting All Protocols"
+print ("Starting All Protocols")
 ixNet.execute('startAllProtocols')
-print "Sleep 30sec for protocols to start"
+print ("Sleep 30sec for protocols to start")
 time.sleep(30)
 
 ################################################################################
@@ -340,21 +340,21 @@ time.sleep(30)
 ################################################################################
 
 ixNet.execute('start', r + '/traffic')
-print "Sleep 30sec to send all traffic"
+print ("Sleep 30sec to send all traffic")
 time.sleep(60)
 
 ################################################################################
 # Stop Captures
 ################################################################################
 
-print 'Stopping capture'
+print ('Stopping capture')
 ixNet.execute('stopCapture')
 
 ################################################################################
 # Stop traffic
 ################################################################################
 
-print "Sleep 5sec then stop traffic"
+print ("Sleep 5sec then stop traffic")
 time.sleep(5)
-print "Stop Traffic"
+print ("Stop Traffic")
 ixNet.execute('stop', '/traffic')

@@ -1,7 +1,7 @@
 # -*- coding: cp1252 -*-
 ################################################################################
 #                                                                              #
-#    Copyright © 1997 - 2018 by IXIA                                           #
+#    Copyright 1997 - 2018 by IXIA Keysight                                    #
 #    All Rights Reserved.                                                      #
 #                                                                              #
 ################################################################################
@@ -115,6 +115,7 @@ import IxNetwork
 ixTclServer = '10.205.25.97'
 ixTclPort   = '8009'
 ports       = [('10.205.28.63', '2', '7',), ('10.205.28.63', '2', '8',)]
+
 
 # get IxNet class
 ixNet = IxNetwork.IxNet()
@@ -277,7 +278,7 @@ ixNet.setMultiAttribute(addressSet2, '-clearOverlays', 'false', '-pattern', 'cou
 ixNet.commit()
 
 addressSet2 = ixNet.add(addressSet2, 'counter')
-ixNet.setMultiAttribute(addressSet2, '-step', '0.1.0.0 ', '-start', '201.1.0.0', '-direction', 'increment')
+ixNet.setMultiAttribute(addressSet2, '-step', '0.1.0.0', '-start', '201.1.0.0', '-direction', 'increment')
 ixNet.commit()
 addressSet2 = ixNet.remapIds(addressSet2)[0]
 

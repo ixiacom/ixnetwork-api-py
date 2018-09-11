@@ -1,7 +1,7 @@
 # -*- coding: cp1252 -*-
 ################################################################################
 #                                                                              #
-#    Copyright © 1997 - 2018 by IXIA                                           #
+#    Copyright 1997 - 2018 by IXIA Keysight                                    #
 #    All Rights Reserved.                                                      #
 #                                                                              #
 ################################################################################
@@ -94,7 +94,7 @@ ixNet.commit()
 print ("Rebooting ports...")
 jobs = [ixNet.setAsync().execute('resetPortCpu', vp) for vp in vports]
 for j in jobs:
-    print j + ' ' + ixNet.getResult(j)
+    print (j + ' ' + ixNet.getResult(j))
 print ("Done... Ports are rebooted...")
 time.sleep(5)
 ixNet.execute('clearStats')

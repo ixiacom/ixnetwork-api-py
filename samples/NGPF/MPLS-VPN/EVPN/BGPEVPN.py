@@ -1,7 +1,7 @@
 # -*- coding: cp1252 -*-
 ################################################################################
 #                                                                              #
-#    Copyright © 1997 - 2018 by IXIA                                           #
+#    Copyright 1997 - 2018 by IXIA Keysight                                    #
 #    All Rights Reserved.                                                      #
 #                                                                              #
 ################################################################################
@@ -119,10 +119,9 @@ import IxNetwork
 # Give chassis/client/ixNetwork server port/ chassis port HW port information
 # below
 #################################################################################
-ixTclServer = '10.216.104.58'
-ixTclPort   = '8350'
-#ports       = [('10.216.108.82', '2', '7'), ('10.216.108.82', '2', '8')]
-ports       = [('10.216.108.46', '2', '3'), ('10.216.108.46', '2', '4')]
+ixTclServer = '10.39.50.134'
+ixTclPort   = '8019'
+ports       = [('10.39.50.251', '7', '11'), ('10.39.50.251', '7', '12')]
 
 # get IxNet class
 ixNet = IxNetwork.IxNet()
@@ -151,7 +150,7 @@ topologies = ixNet.getList(ixNet.getRoot(), 'topology')
 topo1 = topologies[0]
 topo2 = topologies[1]
 
-print "Adding 2 device groups"
+print ("Adding 2 device groups")
 ixNet.add(topo1, 'deviceGroup')
 ixNet.add(topo2, 'deviceGroup')
 ixNet.commit()
@@ -258,8 +257,8 @@ ixNet.setAttribute(ixNet.getAttribute(ldpPrefixPool1, '-prefixLength') + '/singl
 ixNet.setAttribute(ixNet.getAttribute(ldpPrefixPool2, '-prefixLength') + '/singleValue', '-value', '32')
 ixNet.commit()
 
-# Add ipv4 loopback1 for applib traffic
-print("Adding ipv4 loopback1 for applib traffic")
+# Add ipv4 loopback1 
+print("Adding ipv4 loopback1") 
 chainedDg1 = ixNet.add(networkGroup1, 'deviceGroup')
 ixNet.setMultiAttribute(chainedDg1, '-multiplier', '1', '-name', 'Device Group 3')
 ixNet.commit()
@@ -283,8 +282,8 @@ ixNet.setMultiAttribute(addressSet1, '-step', '0.0.0.1', '-start', '2.2.2.2', '-
 ixNet.commit()
 addressSet1 = ixNet.remapIds(addressSet1)[0]
 
-# Add ipv4 loopback2 for applib traffic
-print("Adding ipv4 loopback2 for applib traffic")
+# Add ipv4 loopback2
+print("Adding ipv4 loopback2")
 chainedDg2 = ixNet.add(networkGroup2, 'deviceGroup')
 ixNet.setMultiAttribute(chainedDg2, '-multiplier', '1', '-name', 'Device Group 4')
 ixNet.commit()
@@ -297,14 +296,14 @@ ixNet.commit()
 connector2 = ixNet.add(loopback2, 'connector')
 ixNet.setMultiAttribute(connector2, '-connectedTo', networkGroup2 + '/ipv4PrefixPools:1')
 ixNet.commit()
-connector1 = ixNet.remapIds(connector2)[0]
+connector2 = ixNet.remapIds(connector2)[0]
 
 addressSet2 = ixNet.getAttribute(loopback2, '-address')
 ixNet.setMultiAttribute(addressSet2, '-clearOverlays', 'false', '-pattern', 'counter')
 ixNet.commit()
 
 addressSet2 = ixNet.add(addressSet2, 'counter')
-ixNet.setMultiAttribute(addressSet2, '-step', '0.0.0.1 ', '-start', '3.2.2.2', '-direction', 'increment')
+ixNet.setMultiAttribute(addressSet2, '-step', '0.0.0.1', '-start', '3.2.2.2', '-direction', 'increment')
 ixNet.commit()
 addressSet2 = ixNet.remapIds(addressSet2)[0]
 

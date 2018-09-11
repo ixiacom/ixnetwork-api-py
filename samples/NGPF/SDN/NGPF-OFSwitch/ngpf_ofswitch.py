@@ -2,7 +2,7 @@
 #!/usr/bin/tclsh
 ################################################################################
 #                                                                              #
-#    Copyright © 1997 - 2018 by IXIA                                           #
+#    Copyright 1997 - 2018 by IXIA Keysight                                    #
 #    All Rights Reserved.                                                      #
 #                                                                              #
 ################################################################################
@@ -164,9 +164,9 @@ class NgpfOpenFlowSwitch(object):
         time.sleep(10)
     def on_the_fly_port_number_ethernetaddress(self, sw_port):
         EthernetDestVal = self.ixNet.getAttribute(sw_port, '-etherAddr')
-        print EthernetDestVal
+        print (EthernetDestVal)
         val = self.ixNet.getAttribute(EthernetDestVal, '-values')[0]
-        print val
+        print (val)
         self.ixNet.setMultiAttribute(EthernetDestVal, '-clearOverlays', 'false')
         self.ixNet.commit()
         EthernetDestValues = self.ixNet.add(EthernetDestVal, 'singleValue')
@@ -243,7 +243,7 @@ class NgpfOpenFlowSwitch(object):
         topologies = self.ixNet.getList(self.ixNet.getRoot(), 'topology')
         topo1 = topologies[0]
 
-        print "Adding 2 device groups"
+        print ("Adding 2 device groups")
         deviceGroup1 = self.ixNet.add(topo1, 'deviceGroup')
         self.ixNet.commit()
         t1devices = self.ixNet.getList(topo1, 'deviceGroup')
@@ -287,7 +287,7 @@ class NgpfOpenFlowSwitch(object):
         self.ixNet.commit()
 
         openFlowSwitch1 = self.ixNet.getList(ip1, 'openFlowSwitch')[0]
-        print openFlowSwitch1
+        print (openFlowSwitch1)
         time.sleep(5)
 
         openflowSwitchchannels = self.ixNet.add(openFlowSwitch1, 'OFSwitchChannel')
@@ -305,7 +305,7 @@ class NgpfOpenFlowSwitch(object):
         time.sleep(5)
 
         switchTableList = self.ixNet.getList(openFlowSwitch1, 'switchTablesList')[0]
-        print switchTableList
+        print (switchTableList)
 
         networkTopologyObj = self.ixNet.add(deviceGroup1, 'networkTopology')
         self.ixNet.commit()
@@ -315,20 +315,20 @@ class NgpfOpenFlowSwitch(object):
         self.start_protocol_check_stats()
 
         swtopology = self.ixNet.getList(self.ixNet.getRoot(), 'topology')[0]
-        print swtopology
+        print (swtopology)
         deviceGroupSW = self.ixNet.getList(swtopology, 'deviceGroup')[0]
         ethernetSw = self.ixNet.getList(deviceGroupSW, 'ethernet')[0]
         ipv4Sw = self.ixNet.getList(ethernetSw, 'ipv4')[0]
         ofSw = self.ixNet.getList(ipv4Sw, 'openFlowSwitch')[0]
-        print "Now disable/Enable of switch on the fly"
+        print ("Now disable/Enable of switch on the fly")
         self.on_the_fly(ofSw)
 
-        print "Changing Ethernet Address, Port number on the fly!!!!!"
+        print ("Changing Ethernet Address, Port number on the fly!!!!!")
         swPortActive = self.ixNet.getList(ofSw, 'ofSwitchPorts')[0]
-        print swPortActive
+        print (swPortActive)
         self.on_the_fly_port_number_ethernetaddress(swPortActive)
 
-        print "Fetching Switch Learned info !!!!!"
+        print ("Fetching Switch Learned info !!!!!")
         self.print_learned_info(ofSw)
 
         print ('!!! Test Script Ends !!!')

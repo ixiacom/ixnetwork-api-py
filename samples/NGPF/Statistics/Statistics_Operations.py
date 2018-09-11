@@ -1,7 +1,7 @@
 # -*- coding: cp1252 -*-
 ################################################################################
 #                                                                              #
-#    Copyright © 1997 - 2018 by IXIA                                           #
+#    Copyright 1997 - 2018 by IXIA Keysight                                    #
 #    All Rights Reserved.                                                      #
 #                                                                              #
 ################################################################################
@@ -81,13 +81,13 @@ ixNet.connect(py.ixTclServer, '-port', py.ixTclPort, '-version', '7.40')
 ################################################################################
 # Cleaning up IxNetwork
 ################################################################################
-print "Cleaning up IxNetwork..."
+print ("Cleaning up IxNetwork...")
 ixNet.execute('newConfig')
 
 ################################################################################
 # Adding ports to configuration
 ################################################################################
-print "Adding ports to configuration"
+print ("Adding ports to configuration")
 root = ixNet.getRoot()
 ixNet.add(root, 'vport')
 ixNet.add(root, 'vport')
@@ -99,7 +99,7 @@ vport2 = vPorts[1]
 ################################################################################
 # Adding IPv4 endpoints to configuration
 ################################################################################
-print "Add topologies"
+print ("Add topologies")
 ixNet.add(root, 'topology')
 ixNet.add(root, 'topology')
 ixNet.commit()
@@ -107,12 +107,12 @@ ixNet.commit()
 topo1 = ixNet.getList(root, 'topology')[0]
 topo2 = ixNet.getList(root, 'topology')[1]
 
-print "Add ports to topologies"
+print ("Add ports to topologies")
 ixNet.setAttribute(topo1, '-vports', vport1)
 ixNet.setAttribute(topo2, '-vports', vport2)
 ixNet.commit()
 
-print "Add device groups to topologies"
+print ("Add device groups to topologies")
 ixNet.add(topo1, 'deviceGroup')
 ixNet.add(topo2, 'deviceGroup')
 ixNet.commit()
@@ -120,7 +120,7 @@ ixNet.commit()
 dg1 = ixNet.getList(topo1, 'deviceGroup')[0]
 dg2 = ixNet.getList(topo2, 'deviceGroup')[0]
 
-print "Add ethernet stacks to device groups"
+print ("Add ethernet stacks to device groups")
 ixNet.add(dg1, 'ethernet')
 ixNet.add(dg2, 'ethernet')
 ixNet.commit()
@@ -128,7 +128,7 @@ ixNet.commit()
 mac1 = ixNet.getList(dg1, 'ethernet')[0]
 mac2 = ixNet.getList(dg2, 'ethernet')[0]
 
-print "Add ipv4 stacks to ethernets"
+print ("Add ipv4 stacks to ethernets")
 ixNet.add(mac1, 'ipv4')
 ixNet.add(mac2, 'ipv4')
 ixNet.commit()
@@ -136,7 +136,7 @@ ixNet.commit()
 ipv4_1 = ixNet.getList(mac1, 'ipv4')[0]
 ipv4_2 = ixNet.getList(mac2, 'ipv4')[0]
 
-print "Setting multi values for ipv4 addresses"
+print ("Setting multi values for ipv4 addresses")
 ixNet.setMultiAttribute(ixNet.getAttribute(ipv4_1, '-address') + '/counter', '-start', '22.1.1.1', '-step', '0.0.1.0')
 ixNet.setMultiAttribute(ixNet.getAttribute(ipv4_1, '-gatewayIp') + '/counter', '-start', '22.1.1.2', '-step', '0.0.1.0')
 ixNet.setMultiAttribute(ixNet.getAttribute(ipv4_1, '-resolveGateway') + '/singleValue', '-value', 'true')
@@ -148,8 +148,8 @@ ixNet.commit()
 ################################################################################
 # Create Traffic for IPv4
 ################################################################################
-print ''
-print "Creating Traffic for IPv4"
+print ('')
+print ("Creating Traffic for IPv4")
 
 ixNet.add(ixNet.getRoot() + '/traffic', 'trafficItem')
 ixNet.commit()
@@ -205,7 +205,7 @@ ixNet.commit()
 # Assign ports 
 ################################################################################
 vports = ixNet.getList(ixNet.getRoot(), 'vport')
-print "Assigning ports to " + str(vports) + " ..."
+print ("Assigning ports to " + str(vports) + " ...")
 assignPorts = ixNet.execute('assignPorts', py.ports, [], ixNet.getList("/","vport"), True)
 if assignPorts != vports:
     raise TestFailedError("FAILED assigning ports. Got %s" %assignPorts)
@@ -215,9 +215,9 @@ else:
 ################################################################################
 # Start All Protocols
 ################################################################################
-print "Starting All Protocols"
+print ("Starting All Protocols")
 ixNet.execute('startAllProtocols')
-print "Sleep 30sec for protocols to start"
+print ("Sleep 30sec for protocols to start")
 time.sleep(30)
 
 ################################################################################
@@ -226,13 +226,13 @@ time.sleep(30)
 ixNet.execute('generate', ti1)
 ixNet.execute('apply', '/traffic')
 ixNet.execute('start', '/traffic')
-print "Sleep 30sec to send all traffic"
+print ("Sleep 30sec to send all traffic")
 time.sleep(30)
 
-print "#########################"
-print "## Statistics Samples ##"
-print "#########################"
-print ""
+print ("#########################")
+print ("## Statistics Samples ##")
+print ("#########################")
+print ("")
 
 ################################################################################
 # Define function to get the view object using the view name
@@ -251,7 +251,7 @@ def getViewObject(ixNet, viewName):
 # Define function to get the values for the statistics in the view
 ################################################################################
 def getValuesForStatInView(ixNet, viewName, statName):
-    print "- get the stats for %s in view %s" % ( statName, viewName )
+    print ("- get the stats for %s in view %s" % ( statName, viewName ))
     views = ixNet.getList('/statistics', 'view')
     viewObj = getViewObject(ixNet, viewName)
     returned_values = ixNet.execute('getColumnValues', viewObj, statName)
@@ -261,7 +261,7 @@ def getValuesForStatInView(ixNet, viewName, statName):
 # Define function to get all the statistics in the view
 ################################################################################
 def getAllStatsInView(ixNet, viewName):
-    print "- get the stats in view %s" % viewName
+    print ("- get the stats in view %s" % viewName)
     mview = getViewObject(ixNet, viewName)
     mpage = ixNet.getList(mview, 'page')[0]
     mrowvalues = ixNet.getAttribute(mpage, '-rowValues')
@@ -271,19 +271,19 @@ def getAllStatsInView(ixNet, viewName):
 # Define function to create a Snapshot CSV
 ################################################################################
 def takeViewCSVSnapshot(ixNet, viewName, csvPath="c:\\Regression\\Snapshot CSVs", csvType="currentPage"):
-    print "- take Snapshot CSV"
+    print ("- take Snapshot CSV")
     SnapSettingList = [ 'Snapshot.View.Csv.Location: "' + csvPath + '"',
                         'Snapshot.View.Csv.GeneratingMode: "kOverwriteCSVFile"',
                         'Snapshot.Settings.Name: ' + viewName, 
                         'Snapshot.View.Contents: ' + csvType ]
     ixNet.execute('TakeViewCSVSnapshot',str('"' + viewName + '"'),SnapSettingList)
-    print "- snapshot CSV complete"
+    print ("- snapshot CSV complete")
 
 ################################################################################
 # Define function to Enable CSV Logging
 ################################################################################
 def setEnableCsvLogging(ixNet, state=False):
-    print "- set enableCsvLogging to: %s" % state
+    print ("- set enableCsvLogging to: %s" % state)
     ixNet.setAttribute('/statistics', '-enableCsvLogging', state)
     ixNet.commit()
 
@@ -291,8 +291,8 @@ def setEnableCsvLogging(ixNet, state=False):
 # Define function to add formula column
 ################################################################################
 def addFormulaColumn(ixNet, viewName, columnName, formula):
-    print "- insert %s formula column to %s view" % (columnName, viewName)
-    print "- formula %s" % (formula)
+    print ("- insert %s formula column to %s view" % (columnName, viewName))
+    print ("- formula %s" % (formula))
     viewObj = getViewObject(ixNet, viewName)
     formulaColumn = ixNet.add(viewObj + '/formulaCatalog', 'formulaColumn')
     ixNet.setAttribute(formulaColumn, '-caption', columnName)
@@ -303,8 +303,8 @@ def addFormulaColumn(ixNet, viewName, columnName, formula):
 # Define function to edit a formula column
 ################################################################################
 def editFormulaColumn(ixNet, viewName, columnName, formula):
-    print "- edit %s formula column %s in view" % (columnName, viewName)
-    print "- new formula %s" % formula
+    print ("- edit %s formula column %s in view" % (columnName, viewName))
+    print ("- new formula %s" % formula)
     viewObj = getViewObject(ixNet, viewName)
     formulaColumns = ixNet.getList(viewObj + '/formulaCatalog', 'formulaColumn')
     for column in formulaColumns:
@@ -317,21 +317,21 @@ def editFormulaColumn(ixNet, viewName, columnName, formula):
 # Define function to compare 2 stats
 ################################################################################
 def compareTwoStats(ixNet, viewName, statA, statB):
-    print "- compare %s = %s" % (statA, statB)
+    print ("- compare %s = %s" % (statA, statB))
     statsA = getValuesForStatInView(ixNet, viewName, statA)
     statsB = getValuesForStatInView(ixNet, viewName, statB)
     ipv4source = getValuesForStatInView(ixNet, viewName, "IPv4 :Source Address")
     for ip, st1, st2 in zip(ipv4source, statsA, statsB):
         if int(st1) == int(st2):
-            print "\t- Source IP: %s --> OK " % ip
+            print ("\t- Source IP: %s --> OK " % ip)
         else: 
-            print "\t- Source IP: %s --> Failed: %s = %s, %s = %s " % (ip, statA, st1, statB, st2)
+            print ("\t- Source IP: %s --> Failed: %s = %s, %s = %s " % (ip, statA, st1, statB, st2))
 
 ################################################################################
 # Enable CSV Logging across all views 
 ################################################################################
 
-print "Enable CSV Logging across all views"
+print ("Enable CSV Logging across all views")
 setEnableCsvLogging(ixNet, True)
 
 viewName = "Flow Statistics"
@@ -339,33 +339,33 @@ viewName = "Flow Statistics"
 # Add Formula Column to view
 ################################################################################
 
-print "Add Formula Column to view"
+print ("Add Formula Column to view")
 addFormulaColumn(ixNet, viewName, 'Formula Column Name', '="Tx Frames" * 2')
 
 ################################################################################
 # Edit the Formula Column added to view
 ################################################################################
 
-print "Edit the Formula Column added to view"
+print ("Edit the Formula Column added to view")
 editFormulaColumn(ixNet, viewName, 'Formula Column Name', '="Tx Frames" * 3')
 
 ################################################################################
 # Create a Snapshot CSV for view
 ################################################################################
 
-print "Take a Snapshot CSV for view %s" % viewName
+print ("Take a Snapshot CSV for view %s" % viewName)
 takeViewCSVSnapshot(ixNet, viewName)
 
 ################################################################################
 # Check the Tx Frames = Rx Frames for each IPv4 source address
 ################################################################################
 
-print "Check the Tx Frames = Rx Frames for each IPv4 source address"
+print ("Check the Tx Frames = Rx Frames for each IPv4 source address")
 compareTwoStats(ixNet, viewName, "Tx Frames", "Rx Frames")
 
 ################################################################################
 # Disable CSV Logging across all views"
 ################################################################################
 
-print "Disable CSV Logging across all views"
+print ("Disable CSV Logging across all views")
 setEnableCsvLogging(ixNet, False)

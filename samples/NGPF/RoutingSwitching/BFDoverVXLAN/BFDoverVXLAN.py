@@ -1,7 +1,7 @@
 # -*- coding: cp1252 -*-
 ################################################################################
 #                                                                              #
-#    Copyright © 1997 - 2018 by IXIA                                           #
+#    Copyright 1997 - 2018 by IXIA Keysight                                    #
 #    All Rights Reserved.                                                      #
 #                                                                              #
 ################################################################################
@@ -112,9 +112,9 @@ import IxNetwork
 # Give chassis/client/ixNetwork server port/ chassis port HW port information   #
 # below                                                                         #
 #################################################################################
-ixTclServer = '10.216.22.32'
-ixTclPort   = '8009'
-ports       = [('10.216.100.12', '2', '3',), ('10.216.100.12', '2', '4',)]
+ixTclServer = '10.39.50.134'
+ixTclPort   = '8100'
+ports       = [('10.39.50.251', '7', '15',), ('10.39.50.251', '7', '16',)]
 
 # get IxNet class
 ixNet = IxNetwork.IxNet()
@@ -143,7 +143,7 @@ topologies = ixNet.getList(ixNet.getRoot(), 'topology')
 topo1 = topologies[0]
 topo2 = topologies[1]
 
-print "Adding 2 device groups"
+print ("Adding 2 device groups")
 ixNet.add(topo1, 'deviceGroup')
 ixNet.add(topo2, 'deviceGroup')
 ixNet.commit()
@@ -235,12 +235,20 @@ ixNet.commit()
 
 bfdv41 = ixNet.getList(vxlan1, 'bfdv4Interface')[0]
 bfdv42 = ixNet.getList(vxlan2, 'bfdv4Interface')[0]
+
+
+
 bfdv4session1 = ixNet.getList(bfdv41, 'bfdv4Session')[0]
 bfdv4session2 = ixNet.getList(bfdv42, 'bfdv4Session')[0]
 remoteIP1 = ixNet.getAttribute(bfdv4session1, '-remoteIp4')
 remoteIP2 = ixNet.getAttribute(bfdv4session2, '-remoteIp4')
 remoteMac1 = ixNet.getAttribute(bfdv4session1, '-remoteMac')
 remoteMac2 = ixNet.getAttribute(bfdv4session2, '-remoteMac')
+
+ovsdb1 = ixNet.getAttribute(bfdv4session1, '-enableOVSDBCommunication')
+ovsdb2 = ixNet.getAttribute(bfdv4session2, '-enableOVSDBCommunication')
+
+
 ixNet.setAttribute(remoteIP1 + '/singleValue', '-value', '20.20.20.1')
 ixNet.setAttribute(remoteIP2 + '/singleValue', '-value', '20.20.20.2')
 ixNet.setAttribute(remoteMac1 + '/singleValue', '-value', '18:03:73:C7:6C:01')
@@ -260,11 +268,18 @@ ixNet.setAttribute(txInterval2 + '/singleValue', '-value', '2000')
 ixNet.setAttribute(minRxInterval1 + '/singleValue', '-value', '2000')
 ixNet.setAttribute(minRxInterval2 + '/singleValue', '-value', '2000')
 
+ixNet.setAttribute(ovsdb1 + '/singleValue', '-value', 'false')
+ixNet.setAttribute(ovsdb2 + '/singleValue', '-value', 'false')
+
+
+ixNet.setAttribute(bfdv41, '-aggregateBfdSession',  'false')
+ixNet.setAttribute(bfdv42, '-aggregateBfdSession',  'false')
 
 ixNet.commit()
 
 print('ixNet.help(\'::ixNet::OBJ-/topology/deviceGroup/ethernet/ipv4/bfdv4Interface\')')
 print (ixNet.help('::ixNet::OBJ-/topology/deviceGroup/ethernet/ipv4/bfdv4Interface'))
+
 
 
 ################################################################################

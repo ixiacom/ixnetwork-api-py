@@ -1,7 +1,7 @@
 # -*- coding: cp1252 -*-
 ################################################################################
 #                                                                              #
-#    Copyright © 1997 - 2018 by IXIA                                           #
+#    Copyright 1997 - 2018 by IXIA Keysight                                    #
 #    All Rights Reserved.                                                      #
 #                                                                              #
 ################################################################################
@@ -104,7 +104,7 @@ def assignPorts (ixNet, realPort1, realPort2) :
 # IxNetwork.pm file somewhere else where we python can autoload it.
 # "IxNetwork.pm" is available in <IxNetwork_installer_path>\API\Python
 ################################################################################
-ixNetPath = r'C:\Program Files (x86)\Ixia\IxNetwork\7.40.0.355-EB\API\Python'
+ixNetPath = r'C:\Program Files (x86)\Ixia\IxNetwork\8.50.1500.54-EB\API\Python'
 sys.path.append(ixNetPath)
 import IxNetwork
 
@@ -112,14 +112,14 @@ import IxNetwork
 # Give chassis/client/ixNetwork server port/ chassis port HW port information
 # below
 #################################################################################
-ixTclServer = '10.205.28.84'
-ixTclPort   = '8071'
-ports       = [('10.205.28.63', '9', '1',), ('10.205.28.63', '9', '2',)]
+ixTclServer = '10.117.157.255'
+ixTclPort   = '8009'
+ports       = [('10.39.37.100', '1', '1',), ('10.39.37.100', '1', '2',)]
 
 # get IxNet class
 ixNet = IxNetwork.IxNet()
 print("connecting to IxNetwork client")
-ixNet.connect(ixTclServer, '-port', ixTclPort, '-version', '7.40',
+ixNet.connect(ixTclServer, '-port', ixTclPort, '-version', '8.50',
      '-setAttribute', 'strict')
 
 # cleaning up the old configfile, and creating an empty config
@@ -143,7 +143,7 @@ topologies = ixNet.getList(ixNet.getRoot(), 'topology')
 topo1 = topologies[0]
 topo2 = topologies[1]
 
-print "Adding 2 device groups"
+print ("Adding 2 device groups")
 ixNet.add(topo1, 'deviceGroup')
 ixNet.add(topo2, 'deviceGroup')
 ixNet.commit()
@@ -305,7 +305,7 @@ ixNet.setMultiAttribute(addressSet2, '-clearOverlays', 'false', '-pattern', 'cou
 ixNet.commit()
 
 addressSet2 = ixNet.add(addressSet2, 'counter')
-ixNet.setMultiAttribute(addressSet2, '-step', '0.1.0.0 ', '-start', '206.1.0.0', '-direction', 'increment')
+ixNet.setMultiAttribute(addressSet2, '-step', '0.1.0.0', '-start', '206.1.0.0', '-direction', 'increment')
 ixNet.commit()
 addressSet2 = ixNet.remapIds(addressSet2)[0]
 

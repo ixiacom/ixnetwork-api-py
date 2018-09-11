@@ -1,7 +1,7 @@
 # -*- coding: cp1252 -*-
 ################################################################################
 #                                                                              #
-#    Copyright © 1997 - 2018 by IXIA                                           #
+#    Copyright 1997 - 2018 by IXIA Keysight                                    #
 #    All Rights Reserved.                                                      #
 #                                                                              #
 ################################################################################
@@ -122,9 +122,9 @@ import IxNetwork
 # Give chassis/client/ixNetwork server port/ chassis port HW port information
 # below
 #################################################################################
-ixTclServer = '10.216.108.100'
-ixTclPort   = '8009'
-ports       = [('10.216.108.53', '3', '11',), ('10.216.108.53', '3', '12',)]
+ixTclServer = '10.39.50.155'
+ixTclPort   = '8332'
+ports       = [('10.39.43.154', '4', '1',), ('10.39.43.154', '4', '2',)]
 
 # get IxNet class
 ixNet = IxNetwork.IxNet()
@@ -153,7 +153,7 @@ topologies = ixNet.getList(ixNet.getRoot(), 'topology')
 topo1 = topologies[0]
 topo2 = topologies[1]
 
-print "Adding 2 device groups"
+print ("Adding 2 device groups")
 ixNet.add(topo1, 'deviceGroup')
 ixNet.add(topo2, 'deviceGroup')
 ixNet.commit()
@@ -221,7 +221,7 @@ ixNet.commit()
 ldp1 = ixNet.getList(ip1, 'ldpBasicRouter')[0]
 ldp2 = ixNet.getList(ip2, 'ldpBasicRouter')[0]
 
-print ("Enabling P2MP capabilty for mLDP")
+print ("Enabling P2MP capability for mLDP")
 capability1 =(ixNet.getAttribute(ldp1, '-enableP2MPCapability'))
 capability2 =(ixNet.getAttribute(ldp2, '-enableP2MPCapability'))
 
@@ -246,13 +246,13 @@ ixNet.setMultiAttribute(ldp2, '-leafRangesCountV4', '1')
 ixNet.commit()
 
 print("Changing Root Address in Root Ranges behind Topology 1")
-rootRanges= ixNet.getList(ldp1, 'rootRanges')[0]
+rootRanges= ixNet.getList(ldp1, 'ldpRootRangeV4')[0]
 rootRange_rootAddrCount =(ixNet.getAttribute(rootRanges, '-rootAddress'))
 ixNet.setMultiAttribute(rootRange_rootAddrCount + '/counter', '-start', '15.1.1.1') 
 ixNet.commit()
 
 print("Changing Root Address in Leaf Ranges behind Topology 2")
-leafRanges= ixNet.getList(ldp2, 'leafRanges')[0]
+leafRanges= ixNet.getList(ldp2, 'ldpLeafRangeV4')[0]
 leafRange_rootAddrCount =(ixNet.getAttribute(leafRanges, '-rootAddress'))
 ixNet.setMultiAttribute(leafRange_rootAddrCount + '/counter', '-start', '15.1.1.1') 
 ixNet.commit()
@@ -363,11 +363,7 @@ print("***************************************************")
 ################################################################################
 # 5.Change the label, number of LSP Count And apply changes On The Fly (OTF).
 ################################################################################
-print("Changing LSP Count per root On The Fly behind Ingress Router on Topology 1")
-lsp1=(ixNet.getAttribute(rootRanges, '-lspCountPerRoot'))
-ixNet.setMultiAttribute(lsp1 + '/singleValue', '-value', '5')
-
-print("Changing LSP Count per root On The Fly behind Ingress Router on Topology 2")
+print("Changing LSP Count per root On The Fly behind Egress Router on Topology 2")
 lsp2=(ixNet.getAttribute(leafRanges, '-lspCountPerRoot'))
 ixNet.setMultiAttribute(lsp2 + '/singleValue', '-value', '5')
 
@@ -388,7 +384,7 @@ time.sleep(5)
 
 ###############################################################################
 # 6. Retrieve protocol learned info again and compare with
-#    previouly retrieved learned info.
+#    previously retrieved learned info.
 ###############################################################################
 print("Fetching P2MP FEC Learned Info in Ingress Router on Topology 1")
 ixNet.execute('getP2MPFECLearnedInfo', ldp1, '1')
@@ -405,7 +401,7 @@ print("***************************************************")
 ################################################################################
 # 7. Configure L2-L3 traffic
 ################################################################################
-print("Congfiguring L2-L3 Traffic Item")
+print("Configuring L2-L3 Traffic Item")
 trafficItem1 = ixNet.add(ixNet.getRoot() + '/traffic', 'trafficItem')
 ixNet.setMultiAttribute(trafficItem1, '-name', 'IPv4 Traffic Item',
     '-roundRobinPacketOrdering', 'false', '-trafficType', 'ipv4')
@@ -413,12 +409,12 @@ ixNet.commit()
 
 trafficItem1 = ixNet.remapIds(trafficItem1)[0]
 endpointSet1 = ixNet.add(trafficItem1, 'endpointSet')
-source       = [ldp1 + '/rootRanges']
+source       = [ldp1 + '/ldpRootRangeV4']
 
 ixNet.setMultiAttribute(endpointSet1,
     '-name',                  'EndpointSet-1',
     '-scalableSources',       [],
-    '-multicastReceivers',    [[ldp2+ '/leafRanges','0','0','0']],
+    '-multicastReceivers',    [[ldp2+ '/ldpLeafRangeV4','0','0','0']],
     '-scalableDestinations',  [],
     '-ngpfFilters',           [],
     '-trafficGroups',         [],
@@ -440,12 +436,12 @@ ixNet.commit()
 
 trafficItem2 = ixNet.remapIds(trafficItem2)[0]
 endpointSet2 = ixNet.add(trafficItem2, 'endpointSet')
-source       = [ldp1 + '/rootRanges']
+source       = [ldp1 + '/ldpRootRangeV4']
 
 ixNet.setMultiAttribute(endpointSet2,
     '-name',                  'EndpointSet-1',
     '-scalableSources',       [],
-    '-multicastReceivers',    [[ldp2+ '/leafRanges','0','0','0']],
+    '-multicastReceivers',    [[ldp2+ '/ldpLeafRangeV4','0','0','0']],
     '-scalableDestinations',  [],
     '-ngpfFilters',           [],
     '-trafficGroups',         [],

@@ -1,7 +1,7 @@
 # -*- coding: cp1252 -*-
 ################################################################################
 #                                                                              #
-#    Copyright © 1997 - 2018 by IXIA                                           #
+#    Copyright 1997 - 2018 by IXIA Keysight                                    #
 #    All Rights Reserved.                                                      #
 #                                                                              #
 ################################################################################
@@ -63,9 +63,9 @@
 # Utils																		   #
 ################################################################################
 
-print "\n\n\n#######################################"
-print "Running AppLibrary Sample Workflow Script"
-print "#######################################\n\n\n"
+print ("\n\n\n#######################################")
+print ("Running AppLibrary Sample Workflow Script")
+print ("#######################################\n\n\n")
 
 
 #---------------------------------------------------------
@@ -92,7 +92,7 @@ from IxNetwork import IxNet
 ixNet = IxNet()
 import time
 
-print "Connecting to TCL Server..."
+print ("Connecting to TCL Server...")
 ixNet.connect('127.0.0.1','-version', applicationVersion ,'-port','8449' )
 ixNet.execute('newConfig')
 root = ixNet.getRoot()
@@ -103,7 +103,7 @@ availableHW = ixNet.getRoot() + 'availableHardware'
 # Adding chassis
 #------------------------------------
 
-print "Adding chassis to the configuration"
+print ("Adding chassis to the configuration")
 chassis1 = ixNet.add(availableHW ,'chassis')
 chassis1ID = ixNet.remapIds(chassis1)[0]
 
@@ -114,7 +114,7 @@ ixNet.commit()
 # Adding 2 ports
 #------------------------------------
 
-print "Adding offline ports to the configuration"
+print ("Adding offline ports to the configuration")
 vport1 = ixNet.add(root, 'vport')
 ixNet.commit()
 vport1ID = ixNet.remapIds (vport1)[0]
@@ -129,7 +129,7 @@ ixNet.commit()
 # Mapping ports to real ports
 #------------------------------------
 
-print "Mapping offline ports to actual ports in chassis\n"
+print ("Mapping offline ports to actual ports in chassis\n")
 ixNet.setAttribute(vport1 ,'-connectedTo','/availableHardware/chassis:"' + chassisIP + '"/card:' + port1[0] + '/port:' + port1[1])
 ixNet.setAttribute(vport2 ,'-connectedTo','/availableHardware/chassis:"' + chassisIP + '"/card:' + port2[0] + '/port:' + port2[1])
 ixNet.commit()
@@ -139,7 +139,7 @@ ixNet.commit()
 # Adding 1st topology, Device Group, Ethernet, IPv4
 #------------------------------------
 
-print "Building first topology and building its stack"
+print ("Building first topology and building its stack")
 addedTopology_1 = ixNet.add (root, 'topology')
 ixNet.commit()
 addedTopology_1ID = ixNet.remapIds(addedTopology_1)[0]
@@ -179,7 +179,7 @@ ixNet.commit()
 # Adding 2st topology, Device Group, Ethernet, IPv4
 #------------------------------------
 
-print "Building first topology and building its stack"
+print ("Building first topology and building its stack")
 addedTopology_2 = ixNet.add (root, 'topology')
 ixNet.commit()
 addedTopology_2ID = ixNet.remapIds(addedTopology_2)[0]
@@ -221,7 +221,7 @@ ixNet.commit()
 #-------------------------------------------
 # Create traffic item and add flows
 #-------------------------------------------
-print "Adding an AppLibrary traffic item and also adding flows"
+print ("Adding an AppLibrary traffic item and also adding flows")
 
 addedTI = ixNet.add(root + '/traffic','trafficItem','-trafficType','ipv4ApplicationTraffic','-trafficItemType','applicationLibrary')
 ixNet.commit()
@@ -240,7 +240,7 @@ ixNet.commit()
 # Link the traffic item to the new topology set
 #-----------------------------------------------------
 
-print "Adding endpoints to the AppLibrary Traffic Item"
+print ("Adding endpoints to the AppLibrary Traffic Item")
 
 addedEndpointSet = ixNet.add(addedTIID, 'endpointSet')
 ixNet.commit()
@@ -253,7 +253,7 @@ ixNet.commit()
 # Edit traffic item parameters for the added traffic item
 #----------------------------------------------------------
 
-print "\nConfiguring AppLibrary Traffic Item Basic Settings"
+print ("\nConfiguring AppLibrary Traffic Item Basic Settings")
 
 ixNet.setMultiAttribute(addedProfileID ,'-objectiveValue','133','-objectiveType','throughputMbps','-enablePerIPStats','True','-objctiveDistribution','applyFullObjectiveToEachPort')
 ixNet.commit()
@@ -271,7 +271,7 @@ ixNet.commit()
 # Configuring connection parameters
 #----------------------------------------------------------
 
-print "Configuring connection parameters"
+print ("Configuring connection parameters")
 
 
 ixNet.setAttribute(root + '/traffic/trafficItem:1/appLibProfile:1/appLibFlow:"Bandwidth_HTTP"/connection:1/parameter:"serverPort"/number','-value','8080')
@@ -284,44 +284,44 @@ ixNet.commit()
 # Starting up protocols
 #----------------------------------------------------------
 
-print "\nStarting all protocols and waiting for all ranges to be up"
+print ("\nStarting all protocols and waiting for all ranges to be up")
 
 ixNet.execute('startAllProtocols')
 time.sleep(5)
-print "Protocols started"
+print ("Protocols started")
 
 #----------------------------------------------------------
 # Apply and start traffic
 #----------------------------------------------------------
 
-print "\nApplying and starting AppLibrary Traffic"
+print ("\nApplying and starting AppLibrary Traffic")
 ixNet.execute('applyApplicationTraffic',root + '/traffic')
 time.sleep(15)
 ixNet.execute('startApplicationTraffic', root + '/traffic')
 time.sleep(5)
-print "AppLibrary traffic started"
+print ("AppLibrary traffic started")
 
 #----------------------------------------------------------
 # Clearing Statistics for AppLibrary Traffic
 #----------------------------------------------------------
 
-print "\nWaiting 10 seconds before clearing AppLibrary statistics ..."
+print ("\nWaiting 10 seconds before clearing AppLibrary statistics ...")
 time.sleep(10)
 ixNet.execute('clearAppLibraryStats')
-print "Statistics have been cleared"
+print ("Statistics have been cleared")
 
 #----------------------------------------------------------
 # Drilling down per IP
 #----------------------------------------------------------
 
 time.sleep(10)
-print "Drilling down to reveal per IP address flow activity"
+print ("Drilling down to reveal per IP address flow activity")
 
 viewsList = ixNet.getList(root + '/statistics','view')
 
 target = viewsList[viewsList.index('::ixNet::OBJ-/statistics/view:"Application Traffic Item Statistics"')]
 
-print "Configuring drill down per IP addresses"
+print ("Configuring drill down per IP addresses")
 ixNet.setAttribute(target + '/drillDown','-targetRowIndex','0')
 ixNet.commit()
 ixNet.setAttribute(target + '/drillDown','-targetDrillDownOption','Application Traffic:Per IPs')
@@ -329,11 +329,11 @@ ixNet.commit()
 ixNet.setAttribute(target + '/drillDown','-targetRow','Traffic Item=Traffic Item')
 ixNet.commit()
 
-print"Launching the drill down per IP addresses view\n"
+print("Launching the drill down per IP addresses view\n")
 ixNet.execute('doDrillDown', target + '/drillDown')
 time.sleep(3)
 
-print "Refreshing statistics five times in a row"
+print ("Refreshing statistics five times in a row")
 viewsList = ixNet.getList(root + '/statistics','view')
 target = viewsList[viewsList.index('::ixNet::OBJ-/statistics/view:"Application Traffic Drill Down"')]
 
@@ -341,7 +341,7 @@ i = 0
 for i in range(5):
     ixNet.execute('refresh', target)
     time.sleep(5)
-    print "Statistics refreshed..."
+    print ("Statistics refreshed...")
 
 
 #----------------------------------------------------------
@@ -370,15 +370,15 @@ else:
 #----------------------------------------------------------
 
 time.sleep(20)
-print "Stopping AppLibrary traffic"
+print ("Stopping AppLibrary traffic")
 ixNet.execute('stopApplicationTraffic',root + '/traffic')
 
-print testResult
+print (testResult)
 #----------------------------------------------------------
 # Test END
 #----------------------------------------------------------
 
-print "##################"
-print "Test run is PASSED"
-print "##################"
+print ("##################")
+print ("Test run is PASSED")
+print ("##################")
 

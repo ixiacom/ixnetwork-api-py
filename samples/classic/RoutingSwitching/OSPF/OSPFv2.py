@@ -1,7 +1,7 @@
 # -*- coding: cp1252 -*-
 ################################################################################
 #                                                                              #
-#    Copyright © 1997 - 2018 by IXIA                                           #
+#    Copyright 1997 - 2018 by IXIA Keysight                                    #
 #    All Rights Reserved.                                                      #
 #                                                                              #
 # ##############################################################################
@@ -111,6 +111,7 @@ def assignPorts (ixNet, realPort1, realPort2) :
 # "IxNetwork.pm" is available in <IxNetwork_installer_path>\API\Python
 ################################################################################
 ixNetPath = r'C:\Program Files\Ixia\IxNetwork\7.40-EA\API\Python'
+#ixNetPath  = r'C:\Program Files (x86)\Ixia\IxNetwork\8.50.0.310-EB\API\Python'
 sys.path.append(ixNetPath)
 import IxNetwork
 
@@ -118,9 +119,10 @@ import IxNetwork
 # Give chassis/client/ixNetwork server port/ chassis port HW port information
 # below
 #################################################################################
-ixTclServer = '10.205.27.23'
+ixTclServer = 'localhost'
 ixTclPort   = '8009'
-ports       = [('ixin-asd-2', '2', '1',), ('ixin-asd-2', '2', '2',)]
+chassis = "10.36.110.27"
+ports       = [(chassis, '1', '1',), (chassis, '1', '2',)]
 
 # get IxNet class
 ixNet = IxNetwork.IxNet()
@@ -317,7 +319,7 @@ temp = 1
 print ("LSA retrieved on port 1")
 for item  in listLSA1 :
 	count = str(temp)
-	print ("LSA :") + count
+	print ("LSA :" + count)
 	print ("***************************************************")
 
 	linkStateID = ixNet.getAttribute(item, '-linkStateId')
@@ -326,11 +328,11 @@ for item  in listLSA1 :
 	seqNumber = ixNet.getAttribute(item, '-seqNumber')
 	age = ixNet.getAttribute(item, '-age')
 
-	print ( "linkStateID \t:\t") + linkStateID
-	print ( "advRouterID \t:\t") + advRouterID
-	print ( "lsaType     \t:\t") + lsaType
-	print ( "seqNumber   \t:\t") + seqNumber
-	print ( "age         \t:\t") + age
+	print ( "linkStateID \t:\t" + linkStateID)
+	print ( "advRouterID \t:\t" + advRouterID)
+	print ( "lsaType     \t:\t" + lsaType)
+	print ( "seqNumber   \t:\t" + seqNumber)
+	print ( "age         \t:\t" + age)
 	print ("")
 	temp += 1
 #End For
@@ -338,7 +340,7 @@ temp = 1
 print ("LSA retrieved on port 2")
 for item  in listLSA2 :
 	count = str(temp)
-	print ("LSA :") + count
+	print ("LSA :" + count)
 	print ("***************************************************")
 
 	linkStateID = ixNet.getAttribute(item, '-linkStateId')
@@ -347,11 +349,11 @@ for item  in listLSA2 :
 	seqNumber = ixNet.getAttribute(item, '-seqNumber')
 	age = ixNet.getAttribute(item, '-age')
 
-	print ( "linkStateID \t:\t") + linkStateID
-	print ( "advRouterID \t:\t") + advRouterID
-	print ( "lsaType     \t:\t") + lsaType
-	print ( "seqNumber   \t:\t") + seqNumber
-	print ( "age         \t:\t") + age
+	print ( "linkStateID \t:\t" + linkStateID)
+	print ( "advRouterID \t:\t" + advRouterID)
+	print ( "lsaType     \t:\t" + lsaType)
+	print ( "seqNumber   \t:\t" + seqNumber)
+	print ( "age         \t:\t" + age)
 	print ("")
 	temp += 1
 #End For
@@ -419,7 +421,7 @@ temp = 1
 print ("LSA retrieved on port 1")
 for item  in listLSA1 :
 	count = str(temp)
-	print ("LSA :") + count
+	print ("LSA :" + count)
 	print ("***************************************************")
 
 	linkStateID = ixNet.getAttribute(item, '-linkStateId')
@@ -428,11 +430,11 @@ for item  in listLSA1 :
 	seqNumber = ixNet.getAttribute(item, '-seqNumber')
 	age = ixNet.getAttribute(item, '-age')
 
-	print ( "linkStateID \t:\t") + linkStateID
-	print ( "advRouterID \t:\t") + advRouterID
-	print ( "lsaType     \t:\t") + lsaType
-	print ( "seqNumber   \t:\t") + seqNumber
-	print ( "age         \t:\t") + age
+	print ( "linkStateID \t:\t" + linkStateID)
+	print ( "advRouterID \t:\t" + advRouterID)
+	print ( "lsaType     \t:\t" + lsaType)
+	print ( "seqNumber   \t:\t" + seqNumber)
+	print ( "age         \t:\t" + age)
 	print ("")
 	temp += 1
 #End For
@@ -440,7 +442,7 @@ temp = 1
 print ("LSA retrieved on port 2")
 for item  in listLSA2 :
 	count = str(temp)
-	print ("LSA :") + count
+	print ("LSA :" + count)
 	print ("***************************************************")
 
 	linkStateID = ixNet.getAttribute(item, '-linkStateId')
@@ -449,11 +451,11 @@ for item  in listLSA2 :
 	seqNumber = ixNet.getAttribute(item, '-seqNumber')
 	age = ixNet.getAttribute(item, '-age')
 
-	print ( "linkStateID \t:\t") + linkStateID
-	print ( "advRouterID \t:\t") + advRouterID
-	print ( "lsaType     \t:\t") + lsaType
-	print ( "seqNumber   \t:\t") + seqNumber
-	print ( "age         \t:\t") + age
+	print ( "linkStateID \t:\t" + linkStateID)
+	print ( "advRouterID \t:\t" + advRouterID)
+	print ( "lsaType     \t:\t" + lsaType)
+	print ( "seqNumber   \t:\t" + seqNumber)
+	print ( "age         \t:\t" + age)
 	print ("")
 	temp += 1
 #End For

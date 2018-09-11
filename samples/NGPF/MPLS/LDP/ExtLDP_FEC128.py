@@ -2,7 +2,7 @@
 #!/usr/bin/tclsh
 ################################################################################
 #                                                                              #
-#    Copyright © 1997 - 2018 by IXIA                                           #
+#    Copyright 1997 - 2018 by IXIA Keysight                                    #
 #    All Rights Reserved.                                                      #
 #                                                                              #
 ################################################################################
@@ -169,11 +169,11 @@ topologies = ixNet.getList(ixNet.getRoot(), 'topology')
 topo1 = topologies[0]
 topo2 = topologies[1]
 
-print "Renaming the topologies and the device groups"
+print ("Renaming the topologies and the device groups")
 ixNet.setAttribute(topo1, '-name', 'Topology for FEC128 1')
 ixNet.setAttribute(topo2, '-name', 'Topology for FEC128 2')
 
-print "Adding 2 device groups"
+print ("Adding 2 device groups")
 ixNet.add(topo1, 'deviceGroup')
 ixNet.add(topo2, 'deviceGroup')
 ixNet.commit()

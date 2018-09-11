@@ -2,7 +2,7 @@
 
 ################################################################################
 #                                                                              #
-#    Copyright © 1997 - 2018 by IXIA                                           #
+#    Copyright 1997 - 2018 by IXIA Keysight                                    #
 #    All Rights Reserved.                                                      #
 #                                                                              #
 ################################################################################
@@ -322,7 +322,7 @@ class ovsdb(object):
         index_list = []
         for x in range(startIndex, (LastIndex + 1)):
             index_list.append(x)
-        print index_list
+        print (index_list)
         self.ixNet.execute('attach', cluster_data, index_list)
         return
 
@@ -533,7 +533,7 @@ class ovsdb(object):
     #---------------------------------------------------------------------------
             ''')
         self.attach_bindings_in_range(ovsdb_controller, 1, 10)
-        print "Waiting for 45 seconds before attaching!!!"
+        print ("Waiting for 45 seconds before attaching!!!")
         time.sleep(45)
         print ('''
     #---------------------------------------------------------------------------

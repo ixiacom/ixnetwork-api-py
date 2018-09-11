@@ -1,7 +1,7 @@
 # -*- coding: cp1252 -*-
 ################################################################################
 #                                                                              #
-#    Copyright © 1997 - 2018 by IXIA                                           #
+#    Copyright 1997 - 2018 by IXIA Keysight                                    #
 #    All Rights Reserved.                                                      #
 #                                                                              #
 ################################################################################
@@ -125,7 +125,7 @@ def assignPorts (ixNet, realPort1, realPort2) :
 # IxNetwork.pm file somewhere else where we python can autoload it.
 # "IxNetwork.pm" is available in <IxNetwork_installer_path>\API\Python
 ################################################################################
-ixNetPath = r'C:\Program Files (x86)\Ixia\IxNetwork\7.40.929.3-EB\API\Python'
+ixNetPath = r'C:\Program Files (x86)\Ixia\IxNetwork\8.50.1500.54-EB\API\Python'
 sys.path.append(ixNetPath)
 import IxNetwork
 
@@ -133,9 +133,9 @@ import IxNetwork
 # Give chassis/client/ixNetwork server port/ chassis port HW port information
 # below
 #################################################################################
-ixTclServer = '10.205.28.41'
-ixTclPort   = '8067'
-ports       = [('10.205.28.170', '1', '5',), ('10.205.28.170', '1', '6',)]
+ixTclServer = '10.117.157.255'
+ixTclPort   = '8009'
+ports       = [('10.39.37.100', '1', '1',), ('10.39.37.100', '1', '2',)]
 
 # Variable named trafficType sets type of application traffic to be configured.
 # "ipv4ApplicationTraffic" for ipv4 profile & "ipv6ApplicationTraffic" for ipv6 profile.
@@ -174,7 +174,7 @@ topo1 = topologies[0]
 topo2 = topologies[1]
 
 # Adding Device Groups
-print "Adding 2 device groups"
+print ("Adding 2 device groups")
 ixNet.add(topo1, 'deviceGroup')
 ixNet.add(topo2, 'deviceGroup')
 ixNet.commit()
@@ -389,12 +389,12 @@ ixNet.setMultiAttribute(addressSet2, '-clearOverlays', 'false', '-pattern', 'cou
 ixNet.commit()
 
 addressSet2 = ixNet.add(addressSet2, 'counter')
-ixNet.setMultiAttribute(addressSet2, '-step', '0.1.0.0 ', '-start', '206.1.0.0', '-direction', 'increment')
+ixNet.setMultiAttribute(addressSet2, '-step', '0.1.0.0', '-start', '206.1.0.0', '-direction', 'increment')
 ixNet.commit()
 addressSet2 = ixNet.remapIds(addressSet2)[0]
 
 # Add ipv6 loopback1 for applib traffic
-print "Adding ipv6 loopback1 for applib traffic"
+print ("Adding ipv6 loopback1 for applib traffic")
 chainedDg3 = ixNet.add(networkGroup1, 'deviceGroup')
 ixNet.setMultiAttribute(chainedDg3, '-multiplier', '7', '-name', 'Device Group 6')
 ixNet.commit()
@@ -419,7 +419,7 @@ ixNet.commit()
 addressSet1 = ixNet.remapIds(addressSet1)[0]
 
 # Add ipv6 loopback2 for applib traffic
-print "Adding ipv6 loopback2 for applib traffic"
+print ("Adding ipv6 loopback2 for applib traffic")
 chainedDg4 = ixNet.add(networkGroup2, 'deviceGroup')
 ixNet.setMultiAttribute(chainedDg4, '-multiplier', '7', '-name', 'Device Group 5')
 ixNet.commit()
@@ -670,7 +670,7 @@ ixNet.commit()
 # Configure Application traffic
 ################################################################################
 # Configuring Applib traffic
-print"Configuring Applib traffic profile %s." % trafficType
+print("Configuring Applib traffic profile %s." % trafficType)
 trafficItem2 = ixNet.add(ixNet.getRoot() + '/traffic', 'trafficItem')
 
 ixNet.setMultiAttribute(trafficItem2,

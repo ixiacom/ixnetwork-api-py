@@ -2,7 +2,7 @@
 #!/usr/bin/tclsh
 ################################################################################
 #                                                                              #
-#    Copyright © 1997 - 2018 by IXIA                                           #
+#    Copyright 1997 - 2018 by IXIA Keysight                                    #
 #    All Rights Reserved.                                                      #
 #                                                                              #
 ################################################################################
@@ -112,10 +112,10 @@ class NgpfOpenFlowController(object):
         time.sleep(5)
         matchactionlist = self.ixNet.getList(flow_template, 'matchAction')
         for i in matchactionlist:
-            print i
-            print self.ixNet.getAttribute(i, '-name')
+            print (i)
+            print (self.ixNet.getAttribute(i, '-name'))
             if (self.ixNet.getAttribute(i, '-name') == "[1] Blank Template"):
-                print "success"
+                print ("success")
                 self.ixNet.execute('addFromTemplate', flow_profile, i)
                 self.ixNet.commit()
                 time.sleep(5)
@@ -126,82 +126,82 @@ class NgpfOpenFlowController(object):
 
         for matchCriteria in match_criteria_list:
             if self.ixNet.getAttribute(matchCriteria, '-name') == "Ethernet":
-                print "Match criteria is ethernet"
+                print ("Match criteria is ethernet")
                 self.ixNet.setMultiAttribute(matchCriteria, '-isEnabled', 'true')
                 self.ixNet.commit()
                 ethernetmatchCriteria = self.ixNet.getList(matchCriteria, 'matchCriteria')
-                print ethernetmatchCriteria
+                print (ethernetmatchCriteria)
                 for ethernetmatchlist in ethernetmatchCriteria:
                     if self.ixNet.getAttribute(ethernetmatchlist, '-name') == "Ethernet Source":
                         ethernetsourcefield = self.ixNet.getList(ethernetmatchlist, 'field')[0]
-                        print ethernetsourcefield
+                        print (ethernetsourcefield)
                         valuemulti = self.ixNet.getAttribute(ethernetsourcefield, '-value')
-                        print valuemulti
+                        print (valuemulti)
                         self.ixNet.setAttribute(valuemulti + '/singleValue', '-value', '44:0:0:0:0:77')
                         self.ixNet.commit()
                         time.sleep(5)
                     else:
                         ethernetdestinationfield = self.ixNet.getList(ethernetmatchlist, 'field')[0]
-                        print ethernetdestinationfield
+                        print (ethernetdestinationfield)
                         valuemulti = self.ixNet.getAttribute(ethernetdestinationfield, '-value')
-                        print valuemulti
+                        print (valuemulti)
                         self.ixNet.setAttribute(valuemulti + '/singleValue', '-value', '11:0:0:0:0:77')
                         self.ixNet.commit()
                         time.sleep(5)
 
             if self.ixNet.getAttribute(matchCriteria, '-name') == "IP":
-                print "Match criteria is IP"
+                print ("Match criteria is IP")
                 self.ixNet.setMultiAttribute(matchCriteria, '-isEnabled', 'true')
                 self.ixNet.commit()
                 ipmatchCriteria = self.ixNet.getList(matchCriteria, 'matchCriteria')[0]
-                print ipmatchCriteria
+                print (ipmatchCriteria)
                 ipv4list = self.ixNet.getList(ipmatchCriteria, 'matchCriteria')
                 for ipv4names in ipv4list:
                     if self.ixNet.getAttribute(ipv4names, '-name') == "IPv4 Source":
                         ipsourcefield = self.ixNet.getList(ipv4names, 'field')[0]
-                        print ipsourcefield
+                        print (ipsourcefield)
                         valuemulti = self.ixNet.getAttribute(ipsourcefield, '-value')
-                        print valuemulti
+                        print (valuemulti)
                         self.ixNet.setAttribute(valuemulti + '/singleValue', '-value', '67.1.1.1')
                         self.ixNet.commit()
                         time.sleep(5)
                     else:
                         ipdestinationfield = self.ixNet.getList(ipv4names, 'field')[0]
-                        print ipdestinationfield
+                        print (ipdestinationfield)
                         valuemulti = self.ixNet.getAttribute(ipdestinationfield, '-value')
-                        print valuemulti
+                        print (valuemulti)
                         self.ixNet.setAttribute(valuemulti + '/singleValue', '-value', '4.1.1.1')
                         self.ixNet.commit()
                         time.sleep(5)
 
         flowProfileMatchAction = self.ixNet.getList(flow_profile, 'matchAction')[0]
         flowProfileInstruction = self.ixNet.getList(flowProfileMatchAction, 'instructions')[0]
-        print "Adding instruction"
+        print ("Adding instruction")
         self.ixNet.execute('addInstruction', flowProfileInstruction, "Apply Actions")
         self.ixNet.commit()
         flowProfileInstructionAdded = self.ixNet.getList(flowProfileInstruction, 'instruction')[0]
-        print flowProfileInstructionAdded
-        print "Adding 2 action"
+        print (flowProfileInstructionAdded)
+        print ("Adding 2 action")
         for action in required_action:
             self.ixNet.execute('addAction', flowProfileInstructionAdded, action)
             self.ixNet.commit()
 
         actionsAdded = self.ixNet.getList(flowProfileInstructionAdded, 'actions')[0]
         actionList = self.ixNet.getList(actionsAdded, 'action')
-        print actionList
+        print (actionList)
         for action in actionList:
             if (self.ixNet.getAttribute(action, '-name')) == "Set Ethernet Source":
-                print "action is Set Ethernet Source"
+                print ("action is Set Ethernet Source")
                 val = "4:6:0:0:0:0"
-                print val
+                print (val)
             else:
-                print "action is Set Ethernet Destination"
+                print ("action is Set Ethernet Destination")
                 val = "7:7:4:8:1:7"
-                print val
+                print (val)
             field = self.ixNet.getList(action, 'field')[0]
-            print field
+            print (field)
             actionValue = self.ixNet.getAttribute(field, '-value')
-            print actionValue
+            print (actionValue)
             self.ixNet.setAttribute(actionValue + '/singleValue', '-value', val)
             self.ixNet.commit()
 
@@ -242,14 +242,14 @@ class NgpfOpenFlowController(object):
     ################################################################################
     def on_the_fly(self, flow_profile):
         flowProfileMatchAction = self.ixNet.getList(flow_profile, 'matchAction')[0]
-        print flowProfileMatchAction
+        print (flowProfileMatchAction)
         flowProfileInstruction = self.ixNet.getList(flowProfileMatchAction, 'instructions')[0]
         flowProfileInstructionAdded = self.ixNet.getList(flowProfileInstruction, 'instruction')[0]
         actionsAdded = self.ixNet.getList(flowProfileInstructionAdded, 'actions')[0]
         actionList = self.ixNet.getList(actionsAdded, 'action')[0]
-        print actionList
+        print (actionList)
         if (self.ixNet.getAttribute(actionList, '-name')) == "Set Ethernet Source":
-            print "Modifying Set Ethernet Source  Value OTF to 16:44:33:2:1:1"
+            print ("Modifying Set Ethernet Source  Value OTF to 16:44:33:2:1:1")
             val = "16:44:33:2:1:1"
         Ethernetfield = self.ixNet.getList(actionList, 'field')[0]
         actionValue = self.ixNet.getAttribute(Ethernetfield, '-value')
@@ -286,12 +286,12 @@ class NgpfOpenFlowController(object):
                 for word in values :
                     print(word)
         time.sleep(15)
-        print "Set on demand message for flow stat!!!!"
+        print ("Set on demand message for flow stat!!!!")
         OfChanneLearnedinfoList = self.ixNet.getList(openFlowController1, 'ofChannelLearnedInfoList')[0]
         OnDemandMessage = self.ixNet.getAttribute(OfChanneLearnedinfoList, '-onDemandMessages')
         values1 = self.ixNet.getAttribute(OnDemandMessage, '-values')[0]
         self.ixNet.setAttribute(OnDemandMessage + '/singleValue', '-value', "flowstat")
-        print "sending on demand message on the fly for flow stat learned info"
+        print ("sending on demand message on the fly for flow stat learned info")
         self.ixNet.execute('sendOnDemandMessage', OfChanneLearnedinfoList, 1)
 
 
@@ -312,7 +312,7 @@ class NgpfOpenFlowController(object):
         topologies = self.ixNet.getList(self.ixNet.getRoot(), 'topology')
         topo1 = topologies[0]
 
-        print "Adding 2 device groups"
+        print ("Adding 2 device groups")
         self.ixNet.add(topo1, 'deviceGroup')
         self.ixNet.commit()
         t1devices = self.ixNet.getList(topo1, 'deviceGroup')
@@ -356,7 +356,7 @@ class NgpfOpenFlowController(object):
         self.ixNet.commit()
 
         openFlowController1 = self.ixNet.getList(ip1, 'openFlowController')[0]
-        print openFlowController1
+        print (openFlowController1)
         time.sleep(5)
 
         openflowchannels = self.ixNet.add(openFlowController1, 'openFlowChannel')

@@ -1,7 +1,7 @@
 # -*- coding: cp1252 -*-
 ################################################################################
 #                                                                              #
-#    Copyright © 1997 - 2018 by IXIA                                           #
+#    Copyright 1997 - 2018 by IXIA Keysight                                    #
 #    All Rights Reserved.                                                      #
 #                                                                              #
 ################################################################################
@@ -158,7 +158,7 @@ topologies = ixNet.getList(ixNet.getRoot(), 'topology')
 topo1 = topologies[0]
 topo2 = topologies[1]
 
-print "Adding 2 device groups"
+print ("Adding 2 device groups")
 ixNet.add(topo1, 'deviceGroup')
 ixNet.add(topo2, 'deviceGroup')
 ixNet.commit()
@@ -459,7 +459,7 @@ ixNet.commit()
 ################################################################################
 # change general query responsemode
 ################################################################################
-print "Changing general query responsemode"
+print ("Changing general query responsemode")
 gQResponseMode = (ixNet.getAttribute(mldHost, '-gQResponseMode'))
 ixNet.setMultiAttribute(gQResponseMode,
 	'-clearOverlays', 'false',
