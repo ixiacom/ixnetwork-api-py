@@ -3,7 +3,7 @@
 
 # IxNetwork API Bindings
 #
-# Copyright 1997 - 2017 by IXIA
+# Copyright 1997 - 2018 by IXIA Keysight
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"),
@@ -32,14 +32,21 @@ def read(fname):
 
 setup(
    name='IxNetwork',
-   version='8.40.1124.8',
-   description='IxNetwork API Python Bindings',
+   version='8.50.1501.9',
+   description='IxNetwork Low Level API',
    long_description=read('README.rst'),
    url='https://github.com/ixiacom/ixnetwork-api-py',
    author='Ixia',
-   author_email='andy.balogh@keysight.com',
-   py_modules=['IxNetwork'],
-   #install_requires=required,
+   author_email='diana.galan@keysight.com',
+   packages = ['IxNetwork'],
+   package_data = { 'IxNetwork': ['requirements.txt'] },
+   install_requires=[
+        'backports.ssl>=0.0.9'
+        'backports.ssl-match-hostname>=3.5.0.1',
+        'pyopenssl>=17.5.0',
+        'requests>=2.18.4',
+        'websocket-client>=0.47.0',
+        ],
    license='License :: OSI Approved :: MIT License',
    classifiers=[
       'Development Status :: 5 - Production/Stable',
