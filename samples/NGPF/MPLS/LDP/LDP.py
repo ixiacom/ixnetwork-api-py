@@ -1,7 +1,7 @@
 # -*- coding: cp1252 -*-
 ################################################################################
 #                                                                              #
-#    Copyright © 1997 - 2018 by IXIA                                           #
+#    Copyright 1997 - 2018 by IXIA Keysight                                    #
 #    All Rights Reserved.                                                      #
 #                                                                              #
 ################################################################################
@@ -111,9 +111,9 @@ import IxNetwork
 # Give chassis/client/ixNetwork server port/ chassis port HW port information
 # below
 #################################################################################
-ixTclServer = '10.205.25.71'
-ixTclPort   = '8009'
-ports       = [('10.205.28.63', '9', '15',), ('10.205.28.63', '9', '16',)]
+ixTclServer = '10.39.50.155'
+ixTclPort   = '8332'
+ports       = [('10.39.43.154', '4', '1',), ('10.39.43.154', '4', '2',)]
 
 # get IxNet class
 ixNet = IxNetwork.IxNet()
@@ -142,7 +142,7 @@ topologies = ixNet.getList(ixNet.getRoot(), 'topology')
 topo1 = topologies[0]
 topo2 = topologies[1]
 
-print "Adding 2 device groups"
+print ("Adding 2 device groups")
 ixNet.add(topo1, 'deviceGroup')
 ixNet.add(topo2, 'deviceGroup')
 ixNet.commit()
@@ -287,7 +287,7 @@ ixNet.setMultiAttribute(addressSet2, '-clearOverlays', 'false', '-pattern', 'cou
 ixNet.commit()
 
 addressSet2 = ixNet.add(addressSet2, 'counter')
-ixNet.setMultiAttribute(addressSet2, '-step', '0.1.0.0 ', '-start', '201.1.0.0', '-direction', 'increment')
+ixNet.setMultiAttribute(addressSet2, '-step', '0.1.0.0', '-start', '201.1.0.0', '-direction', 'increment')
 ixNet.commit()
 addressSet2 = ixNet.remapIds(addressSet2)[0]
 

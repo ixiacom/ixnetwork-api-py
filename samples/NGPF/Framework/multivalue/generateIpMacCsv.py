@@ -2,7 +2,7 @@
 #!/usr/bin/env python
 ################################################################################
 #                                                                              #
-#    Copyright © 1997 - 2018 by IXIA                                           #
+#    Copyright 1997 - 2018 by IXIA Keysight                                    #
 #    All Rights Reserved.                                                      #
 #                                                                              #
 ################################################################################
@@ -100,6 +100,6 @@ class MultivalueCsv () :
 ###############################################################################
 # Uncomment below lines to run it stand alone
 ###############################################################################
-# myMultiValueCsv = MultivalueCsv("testMultivalue.csv", 2500)
-# myMultiValueCsv.generate()
+myMultiValueCsv = MultivalueCsv("testMultivalue.csv", 2500)
+myMultiValueCsv.generate()
     

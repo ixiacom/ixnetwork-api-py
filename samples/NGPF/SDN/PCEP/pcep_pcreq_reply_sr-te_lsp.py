@@ -1,7 +1,7 @@
 # -*- coding: cp1252 -*-
 ################################################################################
 #                                                                              #
-#    Copyright © 1997 - 2018 by IXIA                                           #
+#    Copyright 1997 - 2018 by IXIA Keysight                                    #
 #    All Rights Reserved.                                                      #
 #                                                                              #
 ################################################################################
@@ -84,7 +84,7 @@ ixNet.connect(py.ixTclServer, '-port',  py.ixTclPort,  '-version', '8.30')
 # Cleaning up IxNetwork
 ################################################################################
 
-print "Cleaning up IxNetwork..."
+print ("Cleaning up IxNetwork...")
 ixNet.execute('newConfig')
 print("Get IxNetwork root object")
 root = ixNet.getRoot()

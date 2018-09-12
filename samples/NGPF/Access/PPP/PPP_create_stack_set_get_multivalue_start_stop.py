@@ -1,7 +1,7 @@
 # -*- coding: cp1252 -*-
 ################################################################################
 #                                                                              #
-#    Copyright © 1997 - 2018 by IXIA                                           #
+#    Copyright 1997 - 2018 by IXIA Keysight                                    #
 #    All Rights Reserved.                                                      #
 #                                                                              #
 #                                                                              #
@@ -101,7 +101,7 @@ print ("Rebooting ports...")
 jobs = [ixNet.setAsync().execute('resetPortCpu', vp) for vp in vports]
 
 for j in jobs:
-    print j + ' ' + ixNet.getResult(j)
+    print (j + ' ' + ixNet.getResult(j))
 print ("Done... Ports are rebooted...")
 print ("")
 
@@ -226,11 +226,11 @@ vlanID1_mv      = ixNet.getAttribute(vlan1, '-vlanId')
 vlanID2_mv      = ixNet.getAttribute(vlan2, '-vlanId')
 
 print ('\nTo see childs and attributes of an object just type: "ixNet.help(current_object)". The output should be like this:')
-print ixNet.help(vlanID1_mv)
+print (ixNet.help(vlanID1_mv))
 
 print ('\nAvailable patterns for this multivalue can be found out by using getAttribute on the "-availablePatterns" attribute.')
 print ("Output for:  ixNet.getAttribute(vlanID1_mv, '-availablePatterns')")
-print ixNet.getAttribute(vlanID1_mv, '-availablePatterns')
+print (ixNet.getAttribute(vlanID1_mv, '-availablePatterns'))
 
 print ('\nSelected pattern: counter. Set this pattern under "-pattern" attribute with setAttribute.')
 print ("ixNet.setAttribute(vlanID1_mv, '-pattern', 'counter')")

@@ -1,7 +1,7 @@
 # -*- coding: cp1252 -*-
 ################################################################################
 #                                                                              #
-#    Copyright © 1997 - 2018 by IXIA                                           #
+#    Copyright 1997 - 2018 by IXIA Keysight                                    #
 #    All Rights Reserved.                                                      #
 #                                                                              #
 ################################################################################
@@ -77,54 +77,57 @@ import os
 import sys
 import time
 
-def assignPorts (ixNet, realPort1, realPort2) :
-     chassis1 = realPort1[0]
-     chassis2 = realPort2[0]
-     card1    = realPort1[1]
-     card2    = realPort2[1]
-     port1    = realPort1[2]
-     port2    = realPort2[2]
 
-     root = ixNet.getRoot()
-     vport1 = ixNet.add(root, 'vport')
-     ixNet.commit()
-     vport1 = ixNet.remapIds(vport1)[0]
+def assignPorts(ixNet, realPort1, realPort2):
+    chassis1 = realPort1[0]
+    chassis2 = realPort2[0]
+    card1 = realPort1[1]
+    card2 = realPort2[1]
+    port1 = realPort1[2]
+    port2 = realPort2[2]
 
-     vport2 = ixNet.add(root, 'vport')
-     ixNet.commit()
-     vport2 = ixNet.remapIds(vport2)[0]
+    root = ixNet.getRoot()
+    vport1 = ixNet.add(root, 'vport')
+    ixNet.commit()
+    vport1 = ixNet.remapIds(vport1)[0]
 
-     chassisObj1 = ixNet.add(root + '/availableHardware', 'chassis')
-     ixNet.setAttribute(chassisObj1, '-hostname', chassis1)
-     ixNet.commit()
-     chassisObj1 = ixNet.remapIds(chassisObj1)[0]
+    vport2 = ixNet.add(root, 'vport')
+    ixNet.commit()
+    vport2 = ixNet.remapIds(vport2)[0]
 
-     if (chassis1 != chassis2) :
-         chassisObj2 = ixNet.add(root + '/availableHardware', 'chassis')
-         ixNet.setAttribute(chassisObj2, '-hostname', chassis2)
-         ixNet.commit()
-         chassisObj2 = ixNet.remapIds(chassisObj2)[0]
-     else :
-         chassisObj2 = chassisObj1
-     # end if
+    chassisObj1 = ixNet.add(root + '/availableHardware', 'chassis')
+    ixNet.setAttribute(chassisObj1, '-hostname', chassis1)
+    ixNet.commit()
+    chassisObj1 = ixNet.remapIds(chassisObj1)[0]
 
-     cardPortRef1 = chassisObj1 + '/card:%s/port:%s' % (card1,port1)
-     ixNet.setMultiAttribute(vport1, '-connectedTo', cardPortRef1,
-         '-rxMode', 'captureAndMeasure', '-name', 'Ethernet - 001')
-     ixNet.commit()
+    if (chassis1 != chassis2):
+        chassisObj2 = ixNet.add(root + '/availableHardware', 'chassis')
+        ixNet.setAttribute(chassisObj2, '-hostname', chassis2)
+        ixNet.commit()
+        chassisObj2 = ixNet.remapIds(chassisObj2)[0]
+    else:
+        chassisObj2 = chassisObj1
+    # end if
 
-     cardPortRef2 = chassisObj2 + '/card:%s/port:%s' % (card2,port2)
-     ixNet.setMultiAttribute(vport2, '-connectedTo', cardPortRef2,
-         '-rxMode', 'captureAndMeasure', '-name', 'Ethernet - 002')
-     ixNet.commit()
+    cardPortRef1 = chassisObj1 + '/card:%s/port:%s' % (card1, port1)
+    ixNet.setMultiAttribute(vport1, '-connectedTo', cardPortRef1,
+                            '-rxMode', 'captureAndMeasure', '-name', 'Ethernet - 001')
+    ixNet.commit()
+
+    cardPortRef2 = chassisObj2 + '/card:%s/port:%s' % (card2, port2)
+    ixNet.setMultiAttribute(vport2, '-connectedTo', cardPortRef2,
+                            '-rxMode', 'captureAndMeasure', '-name', 'Ethernet - 002')
+    ixNet.commit()
+
+
 # end def assignPorts
 
 ################################################################################
 # Either feed the ixNetwork library path in the sys.path as below, or put the
-# IxNetwork.pm file somewhere else where we python can autoload it.
-# "IxNetwork.pm" is available in <IxNetwork_installer_path>\API\Python
+# IxNetwork.py file somewhere else where we python can autoload it.
+# "IxNetwork.py" is available in <IxNetwork_installer_path>\API\Python
 ################################################################################
-ixNetPath = r'C:\Program Files (x86)\Ixia\IxNetwork\8.00.1026.7-EB\API\Python'
+ixNetPath = r'C:\Program Files (x86)\Ixia\IxNetwork\8.50.1500.69-EB\API\Python'
 sys.path.append(ixNetPath)
 import IxNetwork
 
@@ -132,20 +135,20 @@ import IxNetwork
 # Give chassis/client/ixNetwork server port/ chassis port HW port information
 # below
 #################################################################################
-ixTclServer = '10.216.104.58'
-ixTclPort   = '8999'
-ports       = [('10.216.108.82', '2', '15',), ('10.216.108.82', '2', '16',)]
+ixTclServer = '10.117.159.156'
+ixTclPort = '8999'
+ports = [('10.39.50.161', '2', '1',), ('10.39.50.161', '2', '2',)]
 
 # get IxNet class
 ixNet = IxNetwork.IxNet()
 print("connecting to IxNetwork client")
 
-#version = ixNet.getVersion
-#scan [split $version "."] "%d %d" major minor
-#set version "$major.$minor"
+# version = ixNet.getVersion
+# scan [split $version "."] "%d %d" major minor
+# set version "$major.$minor"
 
 ixNet.connect(ixTclServer, '-port', ixTclPort, '-version', '8.00',
-     '-setAttribute', 'strict')
+              '-setAttribute', 'strict')
 
 # cleaning up the old configfile, and creating an empty config
 print("cleaning up the old configfile, and creating an empty config")
@@ -158,7 +161,7 @@ ixNet.execute('newConfig')
 assignPorts(ixNet, ports[0], ports[1])
 time.sleep(5)
 
-root    = ixNet.getRoot()
+root = ixNet.getRoot()
 vportTx = ixNet.getList(root, 'vport')[0]
 vportRx = ixNet.getList(root, 'vport')[1]
 # Creating topology and device group
@@ -170,10 +173,10 @@ ixNet.commit()
 topologies = ixNet.getList(ixNet.getRoot(), 'topology')
 topo1 = topologies[0]
 topo2 = topologies[1]
-print ('Renaming the topologies and the device groups')
+print('Renaming the topologies and the device groups')
 ixNet.setAttribute(topo1, '-name', 'EVPN VXLAN Topology 1')
 ixNet.setAttribute(topo2, '-name', 'EVPN VXLAN Topology 2')
-print ("Adding 2 device groups")
+print("Adding 2 device groups")
 ixNet.add(topo1, 'deviceGroup')
 ixNet.add(topo2, 'deviceGroup')
 ixNet.commit()
@@ -202,12 +205,12 @@ mac2 = ixNet.getList(t2dev1, 'ethernet')[0]
 
 print("Configuring the mac addresses %s" % (mac1))
 ixNet.setMultiAttribute(ixNet.getAttribute(mac1, '-mac') + '/counter',
-    '-direction', 'increment',
-    '-start',     '22:01:01:01:01:01',
-    '-step',      '00:00:00:00:00:01')
+                        '-direction', 'increment',
+                        '-start', '22:01:01:01:01:01',
+                        '-step', '00:00:00:00:00:01')
 
 ixNet.setAttribute(ixNet.getAttribute(mac2, '-mac') + '/singleValue',
-    '-value', '44:01:01:01:01:01')
+                   '-value', '44:01:01:01:01:01')
 ixNet.commit()
 #  Adding IPv4 stack and configuring  IP Address
 print("Add ipv4")
@@ -218,14 +221,14 @@ ip1 = ixNet.getList(mac1, 'ipv4')[0]
 ip2 = ixNet.getList(mac2, 'ipv4')[0]
 mvAdd1 = ixNet.getAttribute(ip1, '-address')
 mvAdd2 = ixNet.getAttribute(ip2, '-address')
-mvGw1  = ixNet.getAttribute(ip1, '-gatewayIp')
-mvGw2  = ixNet.getAttribute(ip2, '-gatewayIp')
+mvGw1 = ixNet.getAttribute(ip1, '-gatewayIp')
+mvGw2 = ixNet.getAttribute(ip2, '-gatewayIp')
 
 print("configuring ipv4 addresses")
 ixNet.setAttribute(mvAdd1 + '/singleValue', '-value', '51.51.51.2')
 ixNet.setAttribute(mvAdd2 + '/singleValue', '-value', '51.51.51.1')
-ixNet.setAttribute(mvGw1  + '/singleValue', '-value', '51.51.51.1')
-ixNet.setAttribute(mvGw2  + '/singleValue', '-value', '51.51.51.2')
+ixNet.setAttribute(mvGw1 + '/singleValue', '-value', '51.51.51.1')
+ixNet.setAttribute(mvGw2 + '/singleValue', '-value', '51.51.51.2')
 ixNet.setAttribute(ixNet.getAttribute(ip1, '-prefix') + '/singleValue', '-value', '26')
 ixNet.setAttribute(ixNet.getAttribute(ip2, '-prefix') + '/singleValue', '-value', '26')
 ixNet.setMultiAttribute(ixNet.getAttribute(ip1, '-resolveGateway') + '/singleValue', '-value', 'true')
@@ -233,13 +236,13 @@ ixNet.setMultiAttribute(ixNet.getAttribute(ip2, '-resolveGateway') + '/singleVal
 ixNet.commit()
 
 #  Adding OSPF and configuring it
-print ('Adding OSPFv2 over IP4 stack')
+print('Adding OSPFv2 over IP4 stack')
 ixNet.add(ip1, 'ospfv2')
 ixNet.add(ip2, 'ospfv2')
 ixNet.commit()
 ospf1 = ixNet.getList(ip1, 'ospfv2')[0]
 ospf2 = ixNet.getList(ip2, 'ospfv2')[0]
-print ('Making the NetworkType to Point to Point in the first OSPF router')
+print('Making the NetworkType to Point to Point in the first OSPF router')
 networkTypeMultiValue1 = ixNet.getAttribute(ospf1, '-networkType')
 ixNet.setMultiAttribute(networkTypeMultiValue1, '-pattern', 'singleValue', '-clearOverlays', 'False')
 ixNet.setMultiAttribute(networkTypeMultiValue1 + '/singleValue', '-value', 'pointtopoint')
@@ -249,7 +252,7 @@ networkTypeMultiValue2 = ixNet.getAttribute(ospf2, '-networkType')
 ixNet.setMultiAttribute(networkTypeMultiValue2, '-pattern', 'singleValue', '-clearOverlays', 'False')
 ixNet.setMultiAttribute(networkTypeMultiValue2 + '/singleValue', '-value', 'pointtopoint')
 ixNet.commit()
-print ('Disabling the Discard Learned Info CheckBox')
+print('Disabling the Discard Learned Info CheckBox')
 ospfv2RouterDiscardLearnedLSA1 = ixNet.getAttribute(ixNet.getList(t1dev1, 'ospfv2Router')[0], '-discardLearnedLsa')
 ospfv2RouterDiscardLearnedLSA2 = ixNet.getAttribute(ixNet.getList(t2dev1, 'ospfv2Router')[0], '-discardLearnedLsa')
 
@@ -260,7 +263,6 @@ ixNet.setMultiAttribute(ospfv2RouterDiscardLearnedLSA2, '-pattern', 'singleValue
 ixNet.setMultiAttribute(ospfv2RouterDiscardLearnedLSA2 + '/singleValue', '-value', 'False')
 ixNet.commit()
 
-
 print('Adding the NetworkGroup with Routers at back of it')
 ixNet.execute('createDefaultStack', t1devices, 'networkTopology')
 ixNet.execute('createDefaultStack', t2devices, 'networkTopology')
@@ -270,11 +272,11 @@ ixNet.setAttribute(networkGroup1, '-name', 'Network Topology 1')
 ixNet.setAttribute(networkGroup2, '-name', 'Network Topology 2')
 ixNet.commit()
 
-netTopo1 =ixNet.getList(networkGroup1, 'networkTopology')[0]
-netTopo2 =ixNet.getList(networkGroup2, 'networkTopology')[0]
+netTopo1 = ixNet.getList(networkGroup1, 'networkTopology')[0]
+netTopo2 = ixNet.getList(networkGroup2, 'networkTopology')[0]
 
 # Adding Chained Device Group Behind front Device Group for IPv4 loopback
-print ('add ipv4 loopback1 for EVPN VXLAN Leaf Ranges')
+print('add ipv4 loopback1 for EVPN VXLAN Leaf Ranges')
 chainedDg1 = ixNet.add(networkGroup1, 'deviceGroup')
 ixNet.setMultiAttribute(chainedDg1, '-multiplier', '1', '-name', 'Edge Router 1')
 ixNet.commit()
@@ -298,7 +300,7 @@ ixNet.setMultiAttribute(addressSet1, '-step', '0.1.0.0', '-start', '2.1.1.1', '-
 ixNet.commit()
 
 addressSet1 = ixNet.remapIds(addressSet1)[0]
-print ('add ipv4 loopback1 for EVPN VXLAN Leaf Ranges')
+print('add ipv4 loopback1 for EVPN VXLAN Leaf Ranges')
 chainedDg2 = ixNet.add(networkGroup2, 'deviceGroup')
 ixNet.setMultiAttribute(chainedDg2, '-multiplier', '1', '-name', 'Edge Router 2')
 ixNet.commit()
@@ -333,45 +335,41 @@ bgpIpv4Peer2 = ixNet.add(loopback2, 'bgpIpv4Peer')
 ixNet.commit()
 bgpIpv4Peer2 = ixNet.remapIds(bgpIpv4Peer2)[0]
 
-
-
-print ('Setting DUT IP in BGPv4 Peer')
+print('Setting DUT IP in BGPv4 Peer')
 ixNet.setAttribute(ixNet.getAttribute(bgpIpv4Peer1, '-dutIp') + '/singleValue',
-    '-value', '3.1.1.1')
+                   '-value', '3.1.1.1')
 ixNet.commit()
 
 ixNet.setMultiAttribute(ixNet.getAttribute(bgpIpv4Peer2, '-dutIp') + '/counter',
-    '-direction', 'increment',
-    '-start',     '2.1.1.1',
-    '-step',      '0.0.0.1')
+                        '-direction', 'increment',
+                        '-start', '2.1.1.1',
+                        '-step', '0.0.0.1')
 
 ixNet.commit()
 
 print('Enabling Learned Route Filters for EVPN VXLAN in BGP4 Peer')
 ixNet.setAttribute(ixNet.getAttribute(bgpIpv4Peer1, '-filterEvpn') + '/singleValue',
-        '-value', '1')
+                   '-value', '1')
 ixNet.commit()
 
 ixNet.setAttribute(ixNet.getAttribute(bgpIpv4Peer2, '-filterEvpn') + '/singleValue',
-        '-value', '1')
+                   '-value', '1')
 ixNet.commit()
-
-
 
 print('Configuring Router\'s MAC Addresses for EVPN VXLAN in BGP4 Peer')
 
 ixNet.setMultiAttribute(ixNet.getAttribute(bgpIpv4Peer1, '-routersMacOrIrbMacAddress') + '/counter',
-    '-direction', 'increment',
-    '-start',     'aa:aa:aa:aa:aa:aa',
-    '-step',      '00:00:00:00:00:01')
+                        '-direction', 'increment',
+                        '-start', 'aa:aa:aa:aa:aa:aa',
+                        '-step', '00:00:00:00:00:01')
 
 ixNet.commit()
 
 ixNet.setAttribute(ixNet.getAttribute(bgpIpv4Peer2, '-routersMacOrIrbMacAddress') + '/singleValue',
-    '-value', 'cc:cc:cc:cc:cc:cc')
+                   '-value', 'cc:cc:cc:cc:cc:cc')
 ixNet.commit()
 
-print ('Changing Router Id of Network Topology to Loopback Address of Chained Device Group under Edge Router 1')
+print('Changing Router Id of Network Topology to Loopback Address of Chained Device Group under Edge Router 1')
 simRouter1 = ixNet.getList(netTopo1, 'simRouter')[0]
 simRouterId1 = ixNet.getAttribute(simRouter1, '-routerId')
 ixNet.setMultiAttribute(simRouterId1, '-clearOverlays', 'false', '-pattern', 'counter')
@@ -381,7 +379,7 @@ ixNet.setMultiAttribute(simRouterId1 + '/counter', '-step', '0.0.0.1', '-start',
 ixNet.commit()
 
 simRouterId1 = ixNet.remapIds(simRouterId1)[0]
-print ('Changing Router Id of Network Topology to Loopback Address of Chained Device Group under Edge Router 2')
+print('Changing Router Id of Network Topology to Loopback Address of Chained Device Group under Edge Router 2')
 simRouter2 = ixNet.getList(netTopo2, 'simRouter')[0]
 simRouterId2 = ixNet.getAttribute(simRouter2, '-routerId')
 ixNet.setMultiAttribute(simRouterId2, '-clearOverlays', 'false', '-pattern', 'counter')
@@ -392,7 +390,7 @@ ixNet.commit()
 
 simRouterId2 = ixNet.remapIds(simRouterId2)[0]
 
-print ('Adding EVPN VXLAN over BGPv4 in chained DG')
+print('Adding EVPN VXLAN over BGPv4 in chained DG')
 
 bgpIPv4EvpnVXLAN1 = ixNet.add(bgpIpv4Peer1, 'bgpIPv4EvpnVXLAN')
 ixNet.commit()
@@ -402,10 +400,15 @@ bgpIPv4EvpnVXLAN2 = ixNet.add(bgpIpv4Peer2, 'bgpIPv4EvpnVXLAN')
 ixNet.commit()
 bgpIPv4EvpnVXLAN2 = ixNet.remapIds(bgpIPv4EvpnVXLAN2)[0]
 
-print ('Changing Import Route Target AS No.')
-bgpImportRouteTargetList1 = ixNet.getList(bgpIPv4EvpnVXLAN1, 'bgpImportRouteTargetList') [0]
+print("Disabling Import RT List same as Export RT List")
+ixNet.setAttribute(bgpIPv4EvpnVXLAN1, '-importRtListSameAsExportRtList', 'false')
+ixNet.setAttribute(bgpIPv4EvpnVXLAN2, '-importRtListSameAsExportRtList', 'false')
+ixNet.commit()
 
-bgpImportRouteTargetList2 = ixNet.getList(bgpIPv4EvpnVXLAN2, 'bgpImportRouteTargetList') [0]
+print('Changing Import Route Target AS No.')
+bgpImportRouteTargetList1 = ixNet.getList(bgpIPv4EvpnVXLAN1, 'bgpImportRouteTargetList')[0]
+
+bgpImportRouteTargetList2 = ixNet.getList(bgpIPv4EvpnVXLAN2, 'bgpImportRouteTargetList')[0]
 
 targetAsNo1 = ixNet.getAttribute(bgpImportRouteTargetList1, '-targetAsNumber')
 targetAsNo2 = ixNet.getAttribute(bgpImportRouteTargetList2, '-targetAsNumber')
@@ -418,168 +421,156 @@ ixNet.setMultiAttribute(targetAsNo2 + '/counter', '-step', '0', '-start', '200',
 
 ixNet.commit()
 
+print('Changing Export Route Target AS No.')
+bgpExportRouteTargetList1 = ixNet.getList(bgpIPv4EvpnVXLAN1, 'bgpExportRouteTargetList')[0]
 
-print ('Changing Export Route Target AS No.')
-bgpExportRouteTargetList1 = ixNet.getList(bgpIPv4EvpnVXLAN1, 'bgpExportRouteTargetList') [0]
-
-bgpExportRouteTargetList2 = ixNet.getList(bgpIPv4EvpnVXLAN2, 'bgpExportRouteTargetList') [0]
+bgpExportRouteTargetList2 = ixNet.getList(bgpIPv4EvpnVXLAN2, 'bgpExportRouteTargetList')[0]
 
 ixNet.setMultiAttribute(ixNet.getAttribute(bgpExportRouteTargetList1, '-targetAsNumber') + '/counter',
-    '-direction', 'increment',
-    '-start',     '200',
-    '-step',      '0')
+                        '-direction', 'increment',
+                        '-start', '200',
+                        '-step', '0')
 
 ixNet.commit()
 
 ixNet.setMultiAttribute(ixNet.getAttribute(bgpExportRouteTargetList2, '-targetAsNumber') + '/counter',
-    '-direction', 'increment',
-    '-start',     '200',
-    '-step',      '0')
+                        '-direction', 'increment',
+                        '-start', '200',
+                        '-step', '0')
 
 ixNet.commit()
 
-
-print ('Adding Mac Pools behind EVPN VXLAN  DG')
+print('Adding Mac Pools behind EVPN VXLAN  DG')
 
 ixNet.execute('createDefaultStack', chainedDg1, 'macPools')
 ixNet.execute('createDefaultStack', chainedDg2, 'macPools')
 
-networkGroup3 = ixNet.getList(chainedDg1, 'networkGroup') [0]
-networkGroup4 = ixNet.getList(chainedDg2, 'networkGroup') [0]
+networkGroup3 = ixNet.getList(chainedDg1, 'networkGroup')[0]
+networkGroup4 = ixNet.getList(chainedDg2, 'networkGroup')[0]
 
+ixNet.setAttribute(networkGroup3, '-name', "MAC_Pool_1")
 
-ixNet.setAttribute(networkGroup3 , '-name', "MAC_Pool_1")
+ixNet.setAttribute(networkGroup4, '-name', "MAC_Pool_2")
 
-ixNet.setAttribute(networkGroup4 , '-name', "MAC_Pool_2")
+ixNet.setAttribute(networkGroup3, '-multiplier', "1")
+ixNet.setAttribute(networkGroup4, '-multiplier', "1")
 
-ixNet.setAttribute(networkGroup3 , '-multiplier', "1")
-ixNet.setAttribute(networkGroup4 , '-multiplier', "1")
+mac3 = ixNet.getList(networkGroup3, 'macPools')[0]
+mac4 = ixNet.getList(networkGroup4, 'macPools')[0]
 
-
-mac3 = ixNet.getList(networkGroup3, 'macPools') [0]
-mac4 = ixNet.getList(networkGroup4, 'macPools') [0]
-
-print ('Configuring IPv4 Addresses associated with CMAC Addresses')
+print('Configuring IPv4 Addresses associated with CMAC Addresses')
 
 ipv4PrefixPools1 = ixNet.add(mac3, 'ipv4PrefixPools')
 ixNet.commit()
 ipv4PrefixPools2 = ixNet.add(mac4, 'ipv4PrefixPools')
 ixNet.commit()
 
-
-print ('Changing no. of CMAC Addresses')
-ixNet.setAttribute(mac3 , '-numberOfAddresses', "1")
+print('Changing no. of CMAC Addresses')
+ixNet.setAttribute(mac3, '-numberOfAddresses', "1")
 ixNet.commit()
 
-ixNet.setAttribute(mac4 , '-numberOfAddresses', "1")
+ixNet.setAttribute(mac4, '-numberOfAddresses', "1")
 ixNet.commit()
 
-
-print ('Changing MAC Addresses of CMAC Ranges')
+print('Changing MAC Addresses of CMAC Ranges')
 ixNet.setMultiAttribute(ixNet.getAttribute(mac3, '-mac') + '/counter',
-    '-direction', 'increment',
-    '-start',     '66:66:66:66:66:66',
-    '-step',      '00:00:00:00:00:01')
+                        '-direction', 'increment',
+                        '-start', '66:66:66:66:66:66',
+                        '-step', '00:00:00:00:00:01')
 
 ixNet.setAttribute(ixNet.getAttribute(mac4, '-mac') + '/singleValue',
-    '-value', '88:88:88:88:88:88')
+                   '-value', '88:88:88:88:88:88')
 ixNet.commit()
 
+print('Enabling using of VLAN  in CMAC Ranges')
 
-print  ('Enabling using of VLAN  in CMAC Ranges')
-
-ixNet.setAttribute(mac3 , '-useVlans', "true")
+ixNet.setAttribute(mac3, '-useVlans', "true")
 ixNet.commit()
 
-ixNet.setAttribute(mac4 , '-useVlans', "true")
+ixNet.setAttribute(mac4, '-useVlans', "true")
 ixNet.commit()
 
+print('Configuring CMAC Vlan properties')
+cMacvlan1 = ixNet.getList(mac3, 'vlan')[0]
+cMacvlan2 = ixNet.getList(mac4, 'vlan')[0]
 
-print  ('Configuring CMAC Vlan properties')
-cMacvlan1 = ixNet.getList(mac3, 'vlan') [0]
-cMacvlan2 = ixNet.getList(mac4, 'vlan') [0]
-
-print  ('"Configuring VLAN Ids')
+print('"Configuring VLAN Ids')
 
 ixNet.setMultiAttribute(ixNet.getAttribute(cMacvlan1, '-vlanId') + '/counter',
-    '-direction', 'increment',
-    '-start',     '501',
-    '-step',      '1')
+                        '-direction', 'increment',
+                        '-start', '501',
+                        '-step', '1')
 ixNet.commit()
 
 ixNet.setMultiAttribute(ixNet.getAttribute(cMacvlan2, '-vlanId') + '/counter',
-    '-direction', 'increment',
-    '-start',     '501',
-    '-step',      '1')
+                        '-direction', 'increment',
+                        '-start', '501',
+                        '-step', '1')
 ixNet.commit()
 
-print  ('Configuring VLAN Priorities')
+print('Configuring VLAN Priorities')
 
 ixNet.setAttribute(ixNet.getAttribute(cMacvlan1, '-priority') + '/singleValue',
-    '-value', '7')
+                   '-value', '7')
 ixNet.commit()
 
 ixNet.setAttribute(ixNet.getAttribute(cMacvlan2, '-priority') + '/singleValue',
-    '-value', '7')
+                   '-value', '7')
 ixNet.commit()
 
+print('Changing VNI related Parameters under CMAC Properties')
 
-print  ('Changing VNI related Parameters under CMAC Properties')
+cMacProperties1 = ixNet.getList(mac3, 'cMacProperties')[0]
+cMacProperties2 = ixNet.getList(mac4, 'cMacProperties')[0]
 
-cMacProperties1 = ixNet.getList(mac3, 'cMacProperties') [0]
-cMacProperties2 = ixNet.getList(mac4, 'cMacProperties') [0]
-
-
-print  ('Changing 1st Label(L2VNI)')
+print('Changing 1st Label(L2VNI)')
 ixNet.setMultiAttribute(ixNet.getAttribute(cMacProperties1, '-firstLabelStart') + '/counter',
-    '-direction', 'increment',
-    '-start',     '1001',
-    '-step',      '10')
+                        '-direction', 'increment',
+                        '-start', '1001',
+                        '-step', '10')
 ixNet.commit()
 
 ixNet.setMultiAttribute(ixNet.getAttribute(cMacProperties2, '-firstLabelStart') + '/counter',
-    '-direction', 'increment',
-    '-start',     '1001',
-    '-step',      '10')
+                        '-direction', 'increment',
+                        '-start', '1001',
+                        '-step', '10')
 ixNet.commit()
 ################################################################################
 
-print  ('Changing 2nd Label(L3VNI)')
+print('Changing 2nd Label(L3VNI)')
 ixNet.setMultiAttribute(ixNet.getAttribute(cMacProperties1, '-secondLabelStart') + '/counter',
-    '-direction', 'increment',
-    '-start',     '2001',
-    '-step',      '10')
+                        '-direction', 'increment',
+                        '-start', '2001',
+                        '-step', '10')
 ixNet.commit()
 
 ixNet.setMultiAttribute(ixNet.getAttribute(cMacProperties2, '-secondLabelStart') + '/counter',
-    '-direction', 'increment',
-    '-start',     '2001',
-    '-step',      '10')
+                        '-direction', 'increment',
+                        '-start', '2001',
+                        '-step', '10')
 ixNet.commit()
 
-print  ('Changing Increment Modes across all VNIs')
-
+print('Changing Increment Modes across all VNIs')
 
 ixNet.setAttribute(ixNet.getAttribute(cMacProperties1, '-labelMode') + '/singleValue',
-    '-value', 'increment')
+                   '-value', 'increment')
 ixNet.commit()
 
 ixNet.setAttribute(ixNet.getAttribute(cMacProperties2, '-labelMode') + '/singleValue',
-    '-value', 'increment')
+                   '-value', 'increment')
 ixNet.commit()
 
-
-print  ('Changing VNI step')
+print('Changing VNI step')
 ixNet.setMultiAttribute(ixNet.getAttribute(cMacProperties1, '-labelStep') + '/counter',
-    '-direction', 'increment',
-    '-start',     '1',
-    '-step',      '0')
+                        '-direction', 'increment',
+                        '-start', '1',
+                        '-step', '0')
 ixNet.commit()
 
 ixNet.setMultiAttribute(ixNet.getAttribute(cMacProperties2, '-labelStep') + '/counter',
-    '-direction', 'increment',
-    '-start',     '1',
-    '-step',      '0')
+                        '-direction', 'increment',
+                        '-start', '1',
+                        '-step', '0')
 ixNet.commit()
 
 # ##############################################################################
@@ -593,14 +584,14 @@ time.sleep(60)
 ################################################################################
 # 3> Retrieve protocol statistics.
 ################################################################################
-print ("Fetching all Protocol Summary Stats\n")
-viewPage  = '::ixNet::OBJ-/statistics/view:"Protocols Summary"/page'
-statcap   = ixNet.getAttribute(viewPage, '-columnCaptions')
-for statValList in ixNet.getAttribute(viewPage, '-rowValues') :
-    for  statVal in statValList :
+print("Fetching all Protocol Summary Stats\n")
+viewPage = '::ixNet::OBJ-/statistics/view:"Protocols Summary"/page'
+statcap = ixNet.getAttribute(viewPage, '-columnCaptions')
+for statValList in ixNet.getAttribute(viewPage, '-rowValues'):
+    for statVal in statValList:
         print("***************************************************")
         index = 0
-        for satIndv in statVal :
+        for satIndv in statVal:
             print("%-30s:%s" % (statcap[index], satIndv))
             index = index + 1
         # end for
@@ -613,23 +604,23 @@ print("***************************************************")
 print("Fetching EVPN-VXLAN Learned Info")
 ixNet.execute('getEVPNLearnedInfo', bgpIpv4Peer1, '1')
 time.sleep(5)
-linfo  = ixNet.getList(bgpIpv4Peer1, 'learnedInfo')[0]
+linfo = ixNet.getList(bgpIpv4Peer1, 'learnedInfo')[0]
 
 print("EVPN VXLAN learned info")
 linfoList = ixNet.getList(linfo, 'table')
 print("***************************************************")
-for table in linfoList :
-     tableType = ixNet.getAttribute(table, '-type')
-     print(tableType)
-     print("=================================================")
-     columns = ixNet.getAttribute(table, '-columns')
-     print(columns)
-     values = ixNet.getAttribute(table, '-values')
-     for value in values :
-          for word in values :
-               print(word)
-          #end for
-      # end for
+for table in linfoList:
+    tableType = ixNet.getAttribute(table, '-type')
+    print(tableType)
+    print("=================================================")
+    columns = ixNet.getAttribute(table, '-columns')
+    print(columns)
+    values = ixNet.getAttribute(table, '-values')
+    for value in values:
+        for word in values:
+            print(word)
+        # end for
+    # end for
 # end for
 print("***************************************************")
 
@@ -638,15 +629,15 @@ print("***************************************************")
 ################################################################################
 print("Changing Host IP Address Value associated with CMAC in Topology 2")
 ixNet.setAttribute(ixNet.getAttribute(ipv4PrefixPools2, '-networkAddress') + '/singleValue',
-    '-value', '203.101.1.1')
+                   '-value', '203.101.1.1')
 ixNet.commit()
 
 globalObj = ixNet.getRoot() + '/globals'
-topology  = globalObj + '/topology'
-print ("Applying changes on the fly")
-try :
+topology = globalObj + '/topology'
+print("Applying changes on the fly")
+try:
     ixNet.execute('applyOnTheFly', topology)
-except :
+except:
     print("error in applying on the fly change")
 # end try/expectX
 time.sleep(5)
@@ -657,23 +648,23 @@ time.sleep(5)
 print("Fetching EVPN-VXLAN Learned Info")
 ixNet.execute('getEVPNLearnedInfo', bgpIpv4Peer1, '1')
 time.sleep(5)
-linfo  = ixNet.getList(bgpIpv4Peer1, 'learnedInfo')[0]
+linfo = ixNet.getList(bgpIpv4Peer1, 'learnedInfo')[0]
 
 print("EVPN VXLAN learned info")
 linfoList = ixNet.getList(linfo, 'table')
 print("***************************************************")
-for table in linfoList :
-     tableType = ixNet.getAttribute(table, '-type')
-     print(tableType)
-     print("=================================================")
-     columns = ixNet.getAttribute(table, '-columns')
-     print(columns)
-     values = ixNet.getAttribute(table, '-values')
-     for value in values :
-          for word in values :
-               print(word)
-          #end for
-      # end for
+for table in linfoList:
+    tableType = ixNet.getAttribute(table, '-type')
+    print(tableType)
+    print("=================================================")
+    columns = ixNet.getAttribute(table, '-columns')
+    print(columns)
+    values = ixNet.getAttribute(table, '-values')
+    for value in values:
+        for word in values:
+            print(word)
+        # end for
+    # end for
 # end for
 print("***************************************************")
 
@@ -683,54 +674,54 @@ print("***************************************************")
 print("Configuring L2-L3 Traffic Item")
 trafficItem1 = ixNet.add(ixNet.getRoot() + '/traffic', 'trafficItem')
 ixNet.setMultiAttribute(trafficItem1, '-name', 'EVPN VXLAN Traffic 1',
-    '-roundRobinPacketOrdering', 'false', '-trafficType', 'ipv4')
+                        '-roundRobinPacketOrdering', 'false', '-trafficType', 'ipv4')
 ixNet.commit()
 
 trafficItem1 = ixNet.remapIds(trafficItem1)[0]
 endpointSet1 = ixNet.add(trafficItem1, 'endpointSet')
 
 ixNet.setMultiAttribute(endpointSet1,
-    '-name',                  'EndpointSet-1',
-    '-multicastDestinations', [],
-    '-scalableSources',       [],
-    '-multicastReceivers',    [],
-    '-scalableDestinations',  [],
-    '-ngpfFilters',           [],
-    '-trafficGroups',         [],
-    '-sources',               ipv4PrefixPools1,
-    '-destinations',          ipv4PrefixPools2)
+                        '-name', 'EndpointSet-1',
+                        '-multicastDestinations', [],
+                        '-scalableSources', [],
+                        '-multicastReceivers', [],
+                        '-scalableDestinations', [],
+                        '-ngpfFilters', [],
+                        '-trafficGroups', [],
+                        '-sources', ipv4PrefixPools1,
+                        '-destinations', ipv4PrefixPools2)
 ixNet.commit()
 
 ixNet.setMultiAttribute(trafficItem1 + '/tracking',
-    '-trackBy',        ['mplsFlowDescriptor0', 'sourceDestEndpointPair0', 'ethernetIiWithoutFcsSourceaddress0', 'vxlanVni0', 'ipv4SourceIp1', 'ethernetIiWithoutFcsDestinationaddress0', 'ipv4DestIp1', 'trackingenabled0'],
-    '-fieldWidth',     'thirtyTwoBits',
-    '-protocolOffset', 'Root.0',
-    '-values',         [])
+                        '-trackBy', ['mplsFlowDescriptor0', 'sourceDestEndpointPair0', 'ethernetIiWithoutFcsSourceaddress0', 'vxlanVni0', 'ipv4SourceIp1', 'ethernetIiWithoutFcsDestinationaddress0', 'ipv4DestIp1', 'trackingenabled0'],
+                        '-fieldWidth', 'thirtyTwoBits',
+                        '-protocolOffset', 'Root.0',
+                        '-values', [])
 ixNet.commit()
 
 ###############################################################################
 # 8> Apply and start L2/L3 traffic
 ###############################################################################
-print ('applying L2/L3 traffic')
+print('applying L2/L3 traffic')
 ixNet.execute('apply', ixNet.getRoot() + '/traffic')
 time.sleep(5)
 
-print ('starting L2/L3 traffic')
+print('starting L2/L3 traffic')
 ixNet.execute('start', ixNet.getRoot() + '/traffic')
 
-print ('let traffic run for 120 second')
+print('let traffic run for 120 second')
 time.sleep(120)
 ###############################################################################
 # 9> Retrieve L2/L3 traffic item statistics.
 ###############################################################################
-print ('Verifying all the L2-L3 traffic stats')
+print('Verifying all the L2-L3 traffic stats')
 viewPage = '::ixNet::OBJ-/statistics/view:"Flow Statistics"/page'
-statcap =  ixNet.getAttribute(viewPage, '-columnCaptions')
-for statValList in ixNet.getAttribute(viewPage, '-rowValues') :
-    for  statVal in statValList :
+statcap = ixNet.getAttribute(viewPage, '-columnCaptions')
+for statValList in ixNet.getAttribute(viewPage, '-rowValues'):
+    for statVal in statValList:
         print("***************************************************")
         index = 0
-        for satIndv in statVal :
+        for satIndv in statVal:
             print("%-34s:%s" % (statcap[index], satIndv))
             index = index + 1
         # end for
@@ -740,12 +731,12 @@ print("***************************************************")
 ################################################################################
 # 10> Stop L2/L3 traffic.
 ################################################################################
-print ('Stopping L2/L3 traffic')
+print('Stopping L2/L3 traffic')
 ixNet.execute('stop', ixNet.getRoot() + '/traffic')
 time.sleep(5)
 ################################################################################
 # 11> Stop all protocols.
 ################################################################################
-print ('Stopping protocols')
+print('Stopping protocols')
 ixNet.execute('stopAllProtocols')
-print ('!!! Test Script Ends !!!')
+print('!!! Test Script Ends !!!')

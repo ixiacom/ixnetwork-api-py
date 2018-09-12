@@ -1,7 +1,7 @@
 # -*- coding: cp1252 -*-
 ################################################################################
 #                                                                              #
-#    Copyright © 1997 - 2018 by IXIA                                           #
+#    Copyright 1997 - 2018 by IXIA Keysight                                    #
 #    All Rights Reserved.                                                      #
 #                                                                              #
 ################################################################################
@@ -103,7 +103,7 @@ print ("Rebooting ports...")
 jobs = [ixNet.setAsync().execute('resetPortCpu', vp) for vp in vports]
 
 for j in jobs:
-    print j + ' ' + ixNet.getResult(j)
+    print (j + ' ' + ixNet.getResult(j))
 print ("Done... Ports are rebooted...")
 
 time.sleep(5)
@@ -267,11 +267,11 @@ print ('\n\nChange outer IP address...')
 add_mv      = ixNet.getAttribute(ipV1, '-address')
 
 print ('\nTo see childs and attributes of an object just type: "ixNet.help(current_object)". The output should be like this:')
-print ixNet.help(add_mv)
+print (ixNet.help(add_mv))
 
 print ('\nAvailable patterns for this multivalue can be found out by using getAttribute on the "-availablePatterns" attribute.')
 print ("Output for:  ixNet.getAttribute(add_mv, '-availablePatterns')")
-print ixNet.getAttribute(add_mv, '-availablePatterns')
+print (ixNet.getAttribute(add_mv, '-availablePatterns'))
 
 print ('\nSelected pattern: counter. Set this pattern under "-pattern" attribute with setAttribute.')
 print ("Output for:  ixNet.setAttribute(add_mv, '-pattern', 'counter')")

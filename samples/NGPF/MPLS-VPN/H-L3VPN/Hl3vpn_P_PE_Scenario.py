@@ -1,7 +1,7 @@
 # -*- coding: cp1252 -*-
 ################################################################################
 #                                                                              #
-#    Copyright © 1997 - 2018 by IXIA                                           #
+#    Copyright 1997 - 2018 by IXIA Keysight                                    #
 #    All Rights Reserved.                                                      #
 #                                                                              #
 ################################################################################
@@ -149,7 +149,7 @@ ixNet.commit()
 topologies = ixNet.getList(ixNet.getRoot(), 'topology')
 topo1 = topologies[0]
 
-print "Adding device group"
+print ("Adding device group")
 ixNet.add(topo1, 'deviceGroup')
 ixNet.commit()
 

@@ -3,7 +3,7 @@
 
 ################################################################################
 #                                                                              #
-#    Copyright © 1997 - 2018 by IXIA                                           #
+#    Copyright 1997 - 2018 by IXIA Keysight                                    #
 #    All Rights Reserved.                                                      #
 #                                                                              #
 ################################################################################
@@ -98,13 +98,13 @@ class OneBitValue () :
 ################################################################################
 # Uncomment below lines to run it stand alone
 ################################################################################
-#parser = optparse.OptionParser()
-#parser.add_option('-p', action="store", dest="p", type="int", default="601")
-#parser.add_option('-r', action="store", dest="r", type="int", default="991")
-#options, args = parser.parse_args()
-#
-#peers  = options.p
-#routes = options.r
-#csvFile = "onebit.csv"
-#myOneBitValue = OneBitValue(csvFile, peers, routes)
-#myOneBitValue.generate()
+parser = optparse.OptionParser()
+parser.add_option('-p', action="store", dest="p", type="int", default="601")
+parser.add_option('-r', action="store", dest="r", type="int", default="991")
+options, args = parser.parse_args()
+
+peers  = options.p
+routes = options.r
+csvFile = "onebit.csv"
+myOneBitValue = OneBitValue(csvFile, peers, routes)
+myOneBitValue.generate()
