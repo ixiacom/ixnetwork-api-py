@@ -10,7 +10,7 @@
 
 
 
-IxNetwork.py is the Python library for the IxNetwork Low Level API that allows you to configure and run IxNetwork tests.
+IxNetwork is the Python package for the IxNetwork Low Level API that allows you to configure and run IxNetwork tests.
 
 Installing
 ==========
@@ -35,18 +35,26 @@ Testing
 
 Documentation
 =============
-| For general language documentation of IxNetwork API see `IxNetwork API Docs <http://downloads.ixiacom.com/library/user_guides/IxNetwork/8.31/EA_8.31_Rev_A/LowLevelApiGuide.zip>`_.
+| For general language documentation of IxNetwork API see the `Low Level API Guide <http://downloads.ixiacom.com/library/user_guides/IxNetwork/8.50/EA_8.50_Rev_A/LowLevelApiGuide.zip>`_ and the `IxNetwork API Help <http://downloads.ixiacom.com/library/user_guides/ixnetwork/8.50/EA_8.50_Rev_A/IxNetwork_HTML5/IxNetwork.htm>`_.
 | This will require a login to `Ixia Support <https://support.ixiacom.com/user-guide>`_ web page.
 
 
 IxNetwork API server / Python Support
 =====================================
-IxNetwork.py lib 8.40.1124.8 supports IxNetwork Windows API server 8.40+ and Python 2.7, 3.3, 3.4, 3.5 and 3.6.
+IxNetwork.py lib 8.50.1501.9 supports:
+
+* Python 2.7, 3.3, 3.4, 3.5 and 3.6
+* IxNetwork Windows API server 8.40+
+* IxNetwork Web Edition (Linux API Server) 8.50+
+
+Compatibility with older versions may continue to work but it is not actively supported.
 
 Compatibility Policy
 ====================
-| IxNetwork.py supported IxNetwork API server version and Python versions are mentioned in the above "Support" section.
-| Compatibility with older versions may work but will not be actively supported.
+IxNetwork Low Level API library is supported on the following operating systems:
+
+* Microsoft Windows
+* CentOS 7 on x64 platform
 
 Related Projects
 ================
