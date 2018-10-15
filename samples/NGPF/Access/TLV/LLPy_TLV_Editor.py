@@ -59,7 +59,7 @@
 
 import time
 import os
-from IxNetwork import IxNet
+import IxNetwork
 
 ixNet       = IxNet()
 

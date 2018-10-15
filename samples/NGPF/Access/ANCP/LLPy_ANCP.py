@@ -57,10 +57,10 @@ import os,sys
 ixNetPath  = r'C:\Program Files (x86)\Ixia\IxNetwork\8.50.0.310-EB\API\Python'
 sys.path.append(ixNetPath)
 import time
-from IxNetwork import IxNet
+import IxNetwork
 
 # create an instance of the IxNet class
-ixNet = IxNet()
+ixNet = IxNetwork.IxNet()
 
 # create absolute path for the config and load it
 print ("Connecting to server: localhost")

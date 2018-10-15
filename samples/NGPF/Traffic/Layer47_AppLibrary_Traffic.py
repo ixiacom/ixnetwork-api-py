@@ -86,10 +86,10 @@ PFCriteria_Lower = ['Flows Failed', '40'] 					;# statistic from Application Tra
 # Connecting to TCL Server and loading required packages
 #---------------------------------------------------------
 
-from IxNetwork import IxNet
+import IxNetwork
 
 
-ixNet = IxNet()
+ixNet = IxNetwork.IxNet()
 import time
 
 print ("Connecting to TCL Server...")

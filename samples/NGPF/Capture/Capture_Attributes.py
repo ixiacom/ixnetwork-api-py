@@ -69,9 +69,9 @@ if 'py' not in dir():
 ################################################################################
 # Import the IxNet library
 ################################################################################
-from IxNetwork import IxNet
+import IxNetwork
 import time
-ixNet = IxNet()
+ixNet = IxNetwork.IxNet()
 
 ################################################################################
 # Connect to IxNet client
