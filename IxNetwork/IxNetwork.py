@@ -30,7 +30,7 @@ class IxNetError(Exception):
     '''Default IxNet error'''
 
 
-import IxNetworkLegacy
+from . import IxNetworkLegacy
 
 
 class IxNet(object):
@@ -39,7 +39,7 @@ class IxNet(object):
     """
 
     def __init__(self):
-        self._version = '8.50.1501.9'
+        self._version = '8.50.1501.10'
         self.OK = '::ixNet::OK'
         self.ERROR = '::ixNet::ERROR'
         self._transportType = None
@@ -49,7 +49,7 @@ class IxNet(object):
         self._debug = None
 
         try:
-            import IxNetworkSecure
+            from . import IxNetworkSecure
             self.__ixNetworkSecure = IxNetworkSecure.IxNet()
             self.__ixNetworkSecureImportError = None
         except (ImportError,):

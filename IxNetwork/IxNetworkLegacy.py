@@ -36,7 +36,7 @@ except NameError:
     unicode = str
 
 
-from IxNetwork import IxNetError
+from .IxNetwork import IxNetError
 
 
 class IxNet:
@@ -65,7 +65,7 @@ class IxNet:
         self._timeout = None
         self._transportType = 'TclSocket'
         self._OK = '::ixNet::OK'
-        self._version = '8.50.1501.9'
+        self._version = '8.50.1501.10'
 
     def setDebug(self, debug):
         self._debug = debug

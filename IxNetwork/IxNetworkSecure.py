@@ -90,7 +90,7 @@ missingDependencies = None
 try: unicode = unicode
 except NameError: unicode = str
 
-from IxNetwork import IxNetError 
+from .IxNetwork import IxNetError 
 
 class IxNetAuthenticationError(Exception):
     '''IxNet authentication error'''
@@ -120,7 +120,7 @@ class IxNet(object):
         self._async = False
         self._timeout = None
         self._transportType = 'WebSocket'
-        self._version = '8.50.1501.9'
+        self._version = '8.50.1501.10'
         self.OK = '::ixNet::OK'
         self.ERROR = '::ixNet::ERROR'
         self.VERIFY_CERT = False
