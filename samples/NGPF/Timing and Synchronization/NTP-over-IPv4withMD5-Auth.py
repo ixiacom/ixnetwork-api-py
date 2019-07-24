@@ -2,7 +2,7 @@
 ################################################################################
 # Version 1.0    $Revision: 1 $                                                #
 #                                                                              #
-#    Copyright 1997 - 2018 by IXIA Keysight                                    #
+#    Copyright 1997 - 2019 by IXIA  Keysight                                   #
 #    All Rights Reserved.                                                      #
 #                                                                              #
 #    Revision Log:                                                             #

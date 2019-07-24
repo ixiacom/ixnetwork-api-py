@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright 1997 - 2018 by IXIA Keysight
+# Copyright 1997 - 2019 by IXIA Keysight
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"),
@@ -36,7 +36,7 @@ except NameError:
     unicode = str
 
 
-from IxNetwork import IxNetError
+from .IxNetwork import IxNetError
 
 
 class IxNet:
@@ -65,7 +65,7 @@ class IxNet:
         self._timeout = None
         self._transportType = 'TclSocket'
         self._OK = '::ixNet::OK'
-        self._version = '8.50.1501.9'
+        self._version = '9.00.1915.16'
 
     def setDebug(self, debug):
         self._debug = debug
@@ -94,6 +94,12 @@ class IxNet:
         else:
             return True
 
+    def _is_ipv6(self, hostname):
+        if len(hostname.split(':')) > 1:
+            return True
+        else:
+            return False
+
     def __initialConnect(self, address, port, options):
         # make an initial socket connection
         # this will keep trying as it could be connecting to the proxy
@@ -101,7 +107,10 @@ class IxNet:
         attempts = 0
         while True:
             try:
-                self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                if self._is_ipv6(address):
+                    self._socket = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+                else:
+                    self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 self._socket.connect((address, port))
                 break
             except (socket.error,):
@@ -128,6 +137,7 @@ class IxNet:
                 self._socket.sendall(options.encode('ascii'))
                 self._connectTokens = str(self.__Recv())
                 connectTokens = dict(list(zip(self._connectTokens.split()[::2], self._connectTokens.split()[1::2])))
+                print('connectiontoken is %s' %(connectTokens))
                 self._proxySocket = self._socket
                 self._socket = None
                 self.__initialConnect(address, int(connectTokens['-port']), '')
@@ -166,6 +176,12 @@ class IxNet:
                 serverusername = nameValuePairs['-serverusername']
             if '-connectTimeout' in nameValuePairs:
                 options += ' -connectTimeout ' + nameValuePairs['-connectTimeout']
+            if '-applicationVersion' in nameValuePairs:
+                options += ' -applicationVersion ' + nameValuePairs['-applicationVersion']
+            if '-persistentApplicationVersion' in nameValuePairs:
+                options += ' -persistentApplicationVersion ' + nameValuePairs['-persistentApplicationVersion']
+            if '-forceVersion' in nameValuePairs:
+                options += ' -forceVersion ' + nameValuePairs['-forceVersion']
             if '-closeServerOnDisconnect' in nameValuePairs:
                 options += ' -closeServerOnDisconnect ' + nameValuePairs['-closeServerOnDisconnect']
             else:
@@ -519,7 +535,11 @@ class IxNet:
 
         if len(self._decoratedResult) > 0 and self._decoratedResult[0].startswith('\01'):
             self._decoratedResult[0] = self._decoratedResult[0].replace('\01', '')
-            return eval(''.join(self._decoratedResult))
+            try :
+                return eval(''.join(self._decoratedResult))
+            except :
+                self._decoratedResult[0] = self._decoratedResult[0].replace('\01', '').replace('\r\\n', '')
+                return eval(''.join(self._decoratedResult))
         else:
             return ''.join(self._decoratedResult)
 

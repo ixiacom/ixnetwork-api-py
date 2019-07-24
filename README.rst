@@ -35,16 +35,16 @@ Testing
 
 Documentation
 =============
-| For general language documentation of IxNetwork API see the `Low Level API Guide <http://downloads.ixiacom.com/library/user_guides/ixnetwork/8.50/EA_8.50_Rev_A/QuickReferenceGuides/LLAPI_reference_guide.pdf>`_ and the `IxNetwork API Help <http://downloads.ixiacom.com/library/user_guides/ixnetwork/8.50/EA_8.50_Rev_A/IxNetwork_HTML5/IxNetwork.htm>`_.
+| For general language documentation of IxNetwork API see the `Low Level API Guide <http://downloads.ixiacom.com/library/user_guides/ixnetwork/9.00/EA_9.00_Rev_A/QuickReferenceGuides/LLAPI_reference_guide.pdf>`_ and the `IxNetwork API Help <http://downloads.ixiacom.com/library/user_guides/ixnetwork/9.00/EA_9.00_Rev_A/IxNetwork_HTML5/IxNetwork.htm>`_.
 | This will require a login to `Ixia Support <https://support.ixiacom.com/user-guide>`_ web page.
 
 
 
 IxNetwork API server / Python Support
 =====================================
-IxNetwork.py lib 8.50.1501.9 supports:
+IxNetwork.py lib 9.00.1915.16 supports:
 
-* Python 2.7, 3.3, 3.4, 3.5 and 3.6
+* Python 2.7, 3.3, 3.4, 3.5, 3.6, 3.7
 * IxNetwork Windows API server 8.40+
 * IxNetwork Web Edition (Linux API Server) 8.50+
 

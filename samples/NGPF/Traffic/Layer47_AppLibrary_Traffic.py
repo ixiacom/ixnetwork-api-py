@@ -1,7 +1,7 @@
 # -*- coding: cp1252 -*-
 ################################################################################
 #                                                                              #
-#    Copyright 1997 - 2018 by IXIA Keysight                                    #
+#    Copyright 1997 - 2019 by IXIA  Keysight                                   #
 #    All Rights Reserved.                                                      #
 #                                                                              #
 ################################################################################
@@ -86,10 +86,10 @@ PFCriteria_Lower = ['Flows Failed', '40'] 					;# statistic from Application Tra
 # Connecting to TCL Server and loading required packages
 #---------------------------------------------------------
 
-from IxNetwork import IxNet
+import IxNetwork
 
 
-ixNet = IxNet()
+ixNet = IxNetwork.IxNet()
 import time
 
 print ("Connecting to TCL Server...")

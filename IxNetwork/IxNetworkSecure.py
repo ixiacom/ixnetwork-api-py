@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright 1997 - 2018 by IXIA Keysight
+# Copyright 1997 - 2019 by IXIA Keysight
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"),
@@ -20,6 +20,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
+
 
 import getpass
 import io
@@ -66,9 +67,14 @@ if not (hasattr(ssl, 'SSLContext') and hasattr(ssl.SSLContext, 'check_hostname')
             missingDependencies.append('backports.ssl')
 try: 
     import urllib3
+    try:
+        import urllib3.contrib.pyopenssl as pyopenssl
+        pyopenssl.inject_into_urllib3()
+    except :
+        missingDependencies.append('pyopenssl')
 except ImportError: 
     missingDependencies.append('urllib3')  
-            
+
 if 'urllib3' not in missingDependencies and 'requests' not in missingDependencies:
     if sys.version_info[0] == 2 and ((sys.version_info[1] == 7 and sys.version_info[2] < 9) or sys.version_info[1] < 7):
         import requests.packages.urllib3
@@ -77,7 +83,8 @@ if 'urllib3' not in missingDependencies and 'requests' not in missingDependencie
         except AttributeError:
             raise ImportError('You are using an old urllib3 version which does not support handling the certificate validation warnings. Please upgrade urllib3 using: pip install urllib3 --upgrade')
         if 'backports.ssl' not in missingDependencies and hasattr(urllib3.util, 'IS_PYOPENSSL') and not urllib3.util.IS_PYOPENSSL:
-            missingDependencies.append('pyopenssl')
+            if 'pyopenssl' not in missingDependencies :
+                missingDependencies.append('pyopenssl')
     else:
         try:
             urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -90,7 +97,7 @@ missingDependencies = None
 try: unicode = unicode
 except NameError: unicode = str
 
-from IxNetwork import IxNetError 
+from .IxNetwork import IxNetError 
 
 class IxNetAuthenticationError(Exception):
     '''IxNet authentication error'''
@@ -120,7 +127,7 @@ class IxNet(object):
         self._async = False
         self._timeout = None
         self._transportType = 'WebSocket'
-        self._version = '8.50.1501.9'
+        self._version = '9.00.1915.16'
         self.OK = '::ixNet::OK'
         self.ERROR = '::ixNet::ERROR'
         self.VERIFY_CERT = False
@@ -172,7 +179,7 @@ class IxNet(object):
 
         port = sessionArgs['-port']
         apiKeyFile = sessionArgs['-apiKeyFile']
-        url = 'https://{hostname}:{port}/api/v1/auth/session'.format(hostname=hostname, port=port)
+        url = 'https://{hostname}:{port}/api/v1/auth/session'.format(hostname=self._ip_encloser(hostname), port=port)
         if not self._isConnected(raiseError=False):
             self._createHeaders()
 
@@ -391,7 +398,7 @@ class IxNet(object):
             self._connectionInfo['sessionUrl'] = '{url}/{id}'.format(url=self._connectionInfo['url'], id=self._connectionInfo['sessionId'])
             self._connectionInfo['backendType'] = self._tryGetAttr(session, 'backendType', default='LinuxAPIServer')
             self._connectionInfo['wsUrl'] = '{websocket}://{hostname}:{port}/ixnetworkweb/ixnrest/ws/api/v1/sessions/{id}/ixnetwork/globals/ixnet?closeServerOnDisconnect={closeServerOnDisconnect}&clientType={clientType}&clientUsername={clientusername}'.format(websocket=self._connectionInfo['wsVerb'],
-                                                hostname=self._connectionInfo['hostname'],
+                                                hostname=self._ip_encloser(self._connectionInfo['hostname']),
                                                 port=self._connectionInfo['port'],
                                                 id=self._connectionInfo['sessionId'],
                                                 closeServerOnDisconnect= self._connectionInfo['closeServerOnDisconnect'],
@@ -436,6 +443,7 @@ class IxNet(object):
             if self._connectionInfo['sessionUrl'] and self._connectionInfo['closeServerOnDisconnect']:
                 self._cleanUpSession(self._connectionInfo['sessionUrl'])
             self._close()
+            self._deleteSession(self._connectionInfo['sessionUrl'])
             portValueString = ''
             if '-port' in connectArgs:
                 portValueString = connectArgs['-port']
@@ -450,8 +458,9 @@ class IxNet(object):
     def disconnect(self):
         if self._isConnected():
             self._close()
-            if self._connectionInfo['closeServerOnDisconnect']:
-                self._cleanUpSession(self._connectionInfo['sessionUrl'])
+            # bye, bye self._cleanUpSession() forever 
+            #if self._connectionInfo['closeServerOnDisconnect']:
+            #    self._cleanUpSession(self._connectionInfo['sessionUrl']) 
             self._setDefaults()
         else:
             return 'not connected'
@@ -591,10 +600,16 @@ class IxNet(object):
             'Content-Type': 'application/json'
         }
 
+    def _ip_encloser(self, hostname):
+        if len(hostname.split(':')) > 1:
+            return '[{hostname}]'.format(hostname=hostname)
+        else:
+            return hostname 
+    
     def _createUrl(self, verb, hostname, port):
         return '{verb}{verbSeparator}{hostname}{portSeparator}{port}/api/v1/sessions'.format(verb=verb,
                                                                 verbSeparator='://',
-                                                                hostname=hostname,
+                                                                hostname=self._ip_encloser(hostname),
                                                                 portSeparator=':',
                                                                 port=port)
 
@@ -606,7 +621,11 @@ class IxNet(object):
             self._connectionInfo['wsVerb'] = 'ws' 
         else:
             self._connectionInfo['wsVerb'] = 'wss'
-        self._connectionInfo['hostname'] = hostname
+        m = re.match('\[(?P<hostname>.*)\]', hostname)
+        if m:
+            self._connectionInfo['hostname'] = m.group('hostname')
+        else:
+            self._connectionInfo['hostname'] = hostname
         self._connectionInfo['port'] = port
         self._connectionInfo['url'] = url
 

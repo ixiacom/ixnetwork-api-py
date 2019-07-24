@@ -1,7 +1,7 @@
 # -*- coding: cp1252 -*-
 ################################################################################
 #                                                                              #
-#    Copyright 1997 - 2018 by IXIA Keysight                                    #
+#    Copyright 1997 - 2019 by IXIA  Keysight                                   #
 #    All Rights Reserved.                                                      #
 #                                                                              #
 ################################################################################
@@ -62,10 +62,10 @@
 # import Python packages
 import time
 import os
-from IxNetwork import IxNet
+import IxNetwork
 
 # create an instance of the IxNet class
-ixNet = IxNet()
+ixNet = IxNetwork.IxNet()
 
 # create absolute path for the config and load it
 print ("Connecting to server: localhost")

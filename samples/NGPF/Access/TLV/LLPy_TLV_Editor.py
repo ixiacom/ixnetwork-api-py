@@ -1,7 +1,7 @@
 # -*- coding: cp1252 -*-
 ################################################################################
 #                                                                              #
-#    Copyright 1997 - 2018 by IXIA Keysight                                    #
+#    Copyright 1997 - 2019 by IXIA  Keysight                                   #
 #    All Rights Reserved.                                                      #
 #                                                                              #
 ################################################################################
@@ -59,7 +59,7 @@
 
 import time
 import os
-from IxNetwork import IxNet
+import IxNetwork
 
 ixNet       = IxNet()
 
