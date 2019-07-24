@@ -1,5 +1,5 @@
-backports.ssl>=0.0.9; python_version < '2.7.9'
-backports.ssl-match-hostname>=3.5.0.1; python_version < '2.7.9'
-pyopenssl>=17.5.0; python_version < '2.7.9'
+backports.ssl>=0.0.9
+backports.ssl-match-hostname>=3.5.0.1
+pyopenssl>=17.5.0
 requests>=2.18.4
 websocket-client>=0.47.0

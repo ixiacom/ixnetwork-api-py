@@ -3,7 +3,7 @@
 
 # IxNetwork API Bindings
 #
-# Copyright 1997 - 2018 by IXIA Keysight
+# Copyright 1997 - 2019 by IXIA Keysight
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"),
@@ -32,7 +32,7 @@ def read(fname):
 
 setup(
    name='IxNetwork',
-   version='8.50.1501.9',
+   version='9.00.1915.16',
    description='IxNetwork Low Level API',
    long_description=read('README.rst'),
    url='https://github.com/ixiacom/ixnetwork-api-py',

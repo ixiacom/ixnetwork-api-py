@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright 1997 - 2018 by IXIA Keysight
+# Copyright 1997 - 2019 by IXIA Keysight
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"),
@@ -21,6 +21,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+
 import sys
 import socket
 import select
@@ -39,7 +40,7 @@ class IxNet(object):
     """
 
     def __init__(self):
-        self._version = '8.50.1501.10'
+        self._version = '9.00.1915.16'
         self.OK = '::ixNet::OK'
         self.ERROR = '::ixNet::ERROR'
         self._transportType = None
@@ -82,7 +83,13 @@ class IxNet(object):
             if (len(msg) > 1024):
                 msg = ''.join([msg[:1024], '...'])
             print('[{timestamp}] [IxNet] [debug] {msg}'.format(timestamp=dt, msg=msg))
-    
+
+    def _is_ipv6(self, hostname):
+        if len(hostname.split(':')) > 1:
+            return True
+        else:
+            return False
+
     def _detectTransport(self, hostname, port= None):
         self._log("Detecting transport type...")
         
@@ -95,7 +102,10 @@ class IxNet(object):
         else:
             usingDefaultPorts = False
         try:
-            _socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            if self._is_ipv6(hostname):
+                _socket = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+            else:
+                _socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             _socket.settimeout(_timeout)
             _socket.setblocking(True)
             _socket.connect((hostname, port))
