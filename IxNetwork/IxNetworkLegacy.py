@@ -44,6 +44,7 @@ class IxNet:
         self._root = str('::ixNet::OBJ-/')
         self._null = str('::ixNet::OBJ-null')
         self._socket = None
+        self._socket_timeout = None
         self._address = None
         self._port = None
         self._sessionId = None
@@ -135,7 +136,12 @@ class IxNet:
             connectString = self.__Recv()
             if connectString == 'proxy':
                 self._socket.sendall(options.encode('ascii'))
+
+                current_socket_timeout = self._socket.gettimeout()
+                self._socket.settimeout(self._socket_timeout)
                 self._connectTokens = str(self.__Recv())
+                self._socket.settimeout(current_socket_timeout)
+
                 connectTokens = dict(list(zip(self._connectTokens.split()[::2], self._connectTokens.split()[1::2])))
                 print('connectiontoken is %s' %(connectTokens))
                 self._proxySocket = self._socket
@@ -171,6 +177,8 @@ class IxNet:
             port = int(nameValuePairs['-port'])
 
             options = '-clientusername ' + getpass.getuser()
+            if '-openConnectionTimeout' in nameValuePairs:
+                self._socket_timeout = int(nameValuePairs['-openConnectionTimeout'])
             if '-serverusername' in nameValuePairs:
                 options += ' -serverusername ' + nameValuePairs['-serverusername']
                 serverusername = nameValuePairs['-serverusername']
