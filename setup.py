@@ -41,7 +41,7 @@ setup(
    packages = ['IxNetwork'],
    package_data = { 'IxNetwork': ['requirements.txt'] },
    install_requires=[
-        'backports.ssl>=0.0.9'
+        'backports.ssl>=0.0.9',
         'backports.ssl-match-hostname>=3.5.0.1',
         'pyopenssl>=17.5.0',
         'requests>=2.18.4',
