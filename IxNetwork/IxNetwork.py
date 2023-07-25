@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright 1997 - 2019 by IXIA Keysight
+# Copyright 1997 - 2023 by IXIA Keysight
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"),
@@ -30,6 +30,11 @@ from datetime import datetime
 class IxNetError(Exception):
     '''Default IxNet error'''
 
+def major(ver):
+    major1 = ver.split(".")[0]
+    major2 = ver.split(".")[1]
+    #return ver
+    return major1 + "." + major2
 
 from . import IxNetworkLegacy
 
@@ -40,7 +45,7 @@ class IxNet(object):
     """
 
     def __init__(self):
-        self._version = '9.00.1915.16'
+        self._version = '9.30.2212.7'
         self.OK = '::ixNet::OK'
         self.ERROR = '::ixNet::ERROR'
         self._transportType = None

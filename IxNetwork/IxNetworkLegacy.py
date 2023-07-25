@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright 1997 - 2019 by IXIA Keysight
+# Copyright 1997 - 2023 by IXIA Keysight
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"),
@@ -65,7 +65,7 @@ class IxNet:
         self._timeout = None
         self._transportType = 'TclSocket'
         self._OK = '::ixNet::OK'
-        self._version = '9.00.1915.16'
+        self._version = '9.30.2212.7'
 
     def setDebug(self, debug):
         self._debug = debug
@@ -170,7 +170,10 @@ class IxNet:
                 nameValuePairs['-port'] = 8009
             port = int(nameValuePairs['-port'])
 
-            options = '-clientusername ' + getpass.getuser()
+            if '-clientusername' in nameValuePairs:
+                options = '-clientusername ' +  nameValuePairs['-clientusername']
+            else:
+                options = '-clientusername ' + getpass.getuser()
             if '-serverusername' in nameValuePairs:
                 options += ' -serverusername ' + nameValuePairs['-serverusername']
                 serverusername = nameValuePairs['-serverusername']
@@ -544,7 +547,7 @@ class IxNet:
             return ''.join(self._decoratedResult)
 
     def _CheckClientVersion(self):
-        if self._version != self.getVersion():
+        if  major(self._version) != major(self.getVersion()):
             print('WARNING: IxNetwork Python library version {0} is not matching the IxNetwork client version {1}'.format(self._version, self.getVersion()))
 
 
