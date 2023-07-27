@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright 1997 - 2019 by IXIA Keysight
+# Copyright 1997 - 2023 by IXIA Keysight
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"),
@@ -98,6 +98,7 @@ try: unicode = unicode
 except NameError: unicode = str
 
 from .IxNetwork import IxNetError 
+from .IxNetwork import major
 
 class IxNetAuthenticationError(Exception):
     '''IxNet authentication error'''
@@ -127,7 +128,7 @@ class IxNet(object):
         self._async = False
         self._timeout = None
         self._transportType = 'WebSocket'
-        self._version = '9.00.1915.16'
+        self._version = '9.30.2212.7'
         self.OK = '::ixNet::OK'
         self.ERROR = '::ixNet::ERROR'
         self.VERIFY_CERT = False
@@ -193,7 +194,7 @@ class IxNet(object):
             password = sessionArgs['-password']
 
         try:
-            auth = self._restSend('POST', url, payload={'username': username, 'password': password}, timeout=180)
+            auth = self._restSend('POST', url, payload={'username': username, 'password': password, 'ignorePolicy': True}, timeout=180)
         except IxNetAuthenticationError:
             e = sys.exc_info()[1]
             msg = 'Unable to get API key from {host}:{port}. Error: IxNetAuthenticationError: {err}.\n'.format(host=hostname, port=port, err=e.args[0])
@@ -327,7 +328,8 @@ class IxNet(object):
             '-apiKeyFile': 'api.key',
             '-product': 'ixnrest',
             '-clientusername' : getpass.getuser(),
-            '-serverusername': None
+            '-serverusername': None,
+            '-heartBeat': 'true',
         }
 
         connectArgs = self._getArgMap(default_args, *args)
@@ -433,6 +435,7 @@ class IxNet(object):
                 '-clientId', connectArgs.get('-clientId'),
                 '-closeServerOnDisconnect', closeServerOnDisconnectBool,
                 '-clientUsername', connectArgs['-clientusername'],
+                '-heartBeat', connectArgs['-heartBeat'],
                 '-apiKey', self._headers['X-Api-Key'])
 
             self._checkClientVersion()
@@ -621,7 +624,7 @@ class IxNet(object):
             self._connectionInfo['wsVerb'] = 'ws' 
         else:
             self._connectionInfo['wsVerb'] = 'wss'
-        m = re.match('\[(?P<hostname>.*)\]', hostname)
+        m = re.match(r'\[(?P<hostname>.*)\]', hostname)
         if m:
             self._connectionInfo['hostname'] = m.group('hostname')
         else:
@@ -642,7 +645,7 @@ class IxNet(object):
             try:
                 url = self._restGetRedirect(url, timeout=30)
                 if store:
-                    m = re.match('(?P<verb>https?)://(?P<hostname>[^/]+):(?P<port>\d+)', url)
+                    m = re.match(r'(?P<verb>https?)://(?P<hostname>[^/]+):(?P<port>\d+)', url)
                     if m:
                         port = m.group('port')
                     else:
@@ -938,6 +941,7 @@ class IxNet(object):
     def _send(self, content):
         try:
             if type(content) is str:
+                self._log("sendin = %s " %(content))    
                 content = content.encode('ascii')
             self._websocket.send(content)
         except (Exception):
@@ -948,12 +952,28 @@ class IxNet(object):
     def _recv(self):
         self._decoratedResult = list()
         responseBuffer = str()
+
+        # Heart beat message trap here .
+        try :
+            while True :
+                responseBuffer = self._websocket.recv()
+                if responseBuffer not in ['<0010><0100>', b'<0010><0100>']:
+                    break
+                else :
+                    self._log("got heart beat message ...")
+            # end while
+        except :
+            self._log("warning! error in mesage heart beat message processing ...")
+            pass
+        # end of heartbeat message processing             
+    
         try:
-            responseBuffer = self._websocket.recv().decode('ascii')
+            responseBuffer = responseBuffer.decode('ascii')
         except:
             e = sys.exc_info()[1]
             self._close()
             raise IxNetError('Connection to the remote IxNetwork instance has been closed:' + str(e))
+
         try:
             commandId = None
             contentLength = int(0)
@@ -986,6 +1006,7 @@ class IxNet(object):
                 elif commandId == 9:
                     self._decoratedResult = responseBuffer[stopIndex : stopIndex + contentLength]
                 responseBuffer = responseBuffer[stopIndex + contentLength :]
+            # end while
         except:
             e = sys.exc_info()[1]
             raise IxNetError(self._formatAsIxNetError(str(e)))
@@ -1001,7 +1022,7 @@ class IxNet(object):
 
     def _checkClientVersion(self):
         version = self.getVersion()
-        if self._version != version:
+        if major(self._version)!= major(version):
             print('WARNING: IxNetwork Python library version {0} does not match the IxNetwork server version {1}'.format(self._version, version))
 
     def _isConnected(self, raiseError=False):

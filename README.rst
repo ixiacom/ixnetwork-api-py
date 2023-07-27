@@ -42,7 +42,7 @@ Documentation
 
 IxNetwork API server / Python Support
 =====================================
-IxNetwork.py lib 9.00.1915.16 supports:
+IxNetwork.py lib 9.30.2212.7 supports:
 
 * Python 2.7, 3.3, 3.4, 3.5, 3.6, 3.7
 * IxNetwork Windows API server 8.40+
