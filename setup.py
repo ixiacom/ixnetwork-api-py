@@ -32,7 +32,7 @@ def read(fname):
 
 setup(
    name='IxNetwork',
-   version='9.30.2212.7',
+   version='9.30.2212.8',
    description='IxNetwork Low Level API',
    long_description=read('README.rst'),
    url='https://github.com/ixiacom/ixnetwork-api-py',
