@@ -21,6 +21,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+
 import getpass
 import io
 import os
@@ -37,7 +38,7 @@ except NameError:
 
 
 from .IxNetwork import IxNetError
-
+from .IxNetwork import major
 
 class IxNet:
     def __init__(self):
